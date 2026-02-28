@@ -1,22 +1,60 @@
+<script>document.documentElement.classList.add('taj-snap-page');</script>
+
 <style>
-  .taj-snap {
-    height: 100vh;
-    overflow-y: auto;
+  /* ═══════════════════════════════════════════
+     FULL-PAGE SNAP SCROLL — applied to html
+     Only active when taj-snap-page class is set
+     (set immediately via inline script above)
+     ═══════════════════════════════════════════ */
+
+  html.taj-snap-page {
     scroll-snap-type: y mandatory;
-    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  html.taj-snap-page::-webkit-scrollbar { display: none; }
+
+  html.taj-snap-page body {
+    overflow-x: hidden;
     scrollbar-width: none;
   }
-  .taj-snap::-webkit-scrollbar { display: none; }
+  html.taj-snap-page body::-webkit-scrollbar { display: none; }
+
+  /* ═══ FIXED HEADER OVERLAY ═══
+     Force header to fixed position so it floats
+     above all snap panels on the homepage */
+
+  html.taj-snap-page .t4s-section-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 500 !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+  }
+
+  html.taj-snap-page #shopify-section-announcement-bar,
+  html.taj-snap-page #shopify-section-top-bar {
+    display: none !important;
+  }
+
+  /* ═══ SNAP PANELS ═══ */
 
   .taj-snap__panel {
     scroll-snap-align: start;
+    scroll-snap-stop: always;
     height: 100vh;
+    height: 100dvh;
     width: 100%;
     position: relative;
     overflow: hidden;
   }
 
-  /* Video / Image banner panels */
+  /* ═══ MEDIA — Video & Image banners ═══ */
+
   .taj-snap__media {
     position: absolute;
     inset: 0;
@@ -29,6 +67,8 @@
     object-fit: cover;
     display: block;
   }
+
+  /* ═══ TEXT OVERLAY ═══ */
 
   .taj-snap__overlay {
     position: absolute;
@@ -64,10 +104,8 @@
   }
   .taj-snap__cta:hover { opacity: 1; }
 
-  /* Two-collection grid panel */
-  .taj-snap__panel--collections {
-    padding-top: 60px;
-  }
+  /* ═══ TWO-COLLECTION GRID PANEL ═══ */
+
   .taj-snap__collections {
     display: flex;
     height: 100%;
@@ -118,19 +156,95 @@
   }
   .taj-snap__col-cta:hover { opacity: 1; }
 
-  /* Desktop/mobile image switching for banners */
+  /* ═══ DESKTOP / MOBILE IMAGE SWITCH ═══ */
+
   .taj-snap__media--desktop { display: block; }
-  .taj-snap__media--mobile { display: none; }
+  .taj-snap__media--mobile  { display: none;  }
+
+  /* ═══ FOOTER AS LAST SNAP TARGET ═══ */
+
+  html.taj-snap-page #t4s-footer {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  /* ═══ DOT INDICATORS ═══ */
+
+  .taj-snap-dots {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 600;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .taj-snap-dots__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.7);
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    padding: 0;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .taj-snap-dots__dot:hover {
+    background: rgba(255,255,255,0.5);
+  }
+  .taj-snap-dots__dot.is-active {
+    background: #fff;
+    border-color: #fff;
+    transform: scale(1.35);
+  }
+
+  /* ═══ PANEL ENTRANCE ANIMATIONS ═══ */
+
+  .taj-snap__overlay > * {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.7s ease 0.15s, transform 0.7s ease 0.15s;
+  }
+  .taj-snap__panel.is-in-view .taj-snap__overlay > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .taj-snap__panel.is-in-view .taj-snap__overlay > *:nth-child(2) {
+    transition-delay: 0.35s;
+  }
+  .taj-snap__col-info {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+  }
+  .taj-snap__panel.is-in-view .taj-snap__col-info,
+  .taj-snap__col-card.is-in-view .taj-snap__col-info {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ═══ MOBILE — max-width: 767px ═══ */
 
   @media (max-width: 767px) {
-    .taj-snap__media--desktop { display: none; }
-    .taj-snap__media--mobile { display: block; }
+    .taj-snap__media--desktop { display: none;  }
+    .taj-snap__media--mobile  { display: block; }
 
-    /* Collections: each becomes its own full-screen snap view on mobile */
     .taj-snap__panel--collections {
       height: auto;
-      overflow: visible;
       scroll-snap-align: none;
+      scroll-snap-stop: normal;
+      overflow: visible;
     }
     .taj-snap__collections {
       flex-direction: column;
@@ -139,23 +253,55 @@
     }
     .taj-snap__col-card {
       scroll-snap-align: start;
+      scroll-snap-stop: always;
       height: 100vh;
+      height: 100dvh;
       flex: none;
     }
+
     .taj-snap__col-info { padding: 14px 10px 20px; }
     .taj-snap__col-title { font-size: 11px; letter-spacing: 1.5px; }
-    .taj-snap__col-cta { font-size: 10px; }
-    .taj-snap__title { font-size: 12px; }
-    .taj-snap__cta { font-size: 11px; }
-    .taj-snap__overlay { padding-bottom: 40px; }
+    .taj-snap__col-cta  { font-size: 10px; }
+    .taj-snap__title    { font-size: 12px; }
+    .taj-snap__cta      { font-size: 11px; }
+    .taj-snap__overlay  { padding-bottom: 40px; }
+
+    .taj-snap-dots {
+      right: 14px;
+      gap: 8px;
+    }
+    .taj-snap-dots__dot {
+      width: 6px;
+      height: 6px;
+    }
+  }
+
+  /* ═══ REDUCED MOTION ═══ */
+
+  @media (prefers-reduced-motion: reduce) {
+    html.taj-snap-page { scroll-snap-type: none !important; scroll-behavior: auto !important; }
+    .taj-snap__panel, .taj-snap__col-card, html.taj-snap-page #t4s-footer {
+      scroll-snap-align: none !important;
+      scroll-snap-stop: normal !important;
+    }
+    .taj-snap__overlay > *,
+    .taj-snap__col-info {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+    .taj-snap-dots { display: none; }
   }
 </style>
 
-<section class="taj-snap" data-section-id="{{ section.id }}">
+{%- comment -%} Dot navigation — populated by JS {%- endcomment -%}
+<nav class="taj-snap-dots" aria-label="Section navigation"></nav>
+
+<div class="taj-snap" data-section-id="{{ section.id }}">
 
   {%- comment -%} Panel 1: Video Banner {%- endcomment -%}
   {% if section.settings.video_1 != blank or section.settings.video_1_url != blank %}
-    <div class="taj-snap__panel">
+    <div class="taj-snap__panel" data-snap-panel>
       <div class="taj-snap__media">
         {% if section.settings.video_1 != blank %}
           {{ section.settings.video_1 | video_tag: autoplay: true, muted: true, loop: true, playsinline: true, controls: false }}
@@ -176,14 +322,14 @@
     </div>
   {% endif %}
 
-  {%- comment -%} Panel 2: Two Collections — side by side on desktop, each snaps on mobile {%- endcomment -%}
+  {%- comment -%} Panel 2: Two Collections {%- endcomment -%}
   {% if section.settings.collection_1 != blank or section.settings.collection_2 != blank %}
-    <div class="taj-snap__panel taj-snap__panel--collections">
+    <div class="taj-snap__panel taj-snap__panel--collections" data-snap-panel data-snap-collections>
       <div class="taj-snap__collections">
 
         {% if section.settings.collection_1 != blank %}
           {% assign col1 = section.settings.collection_1 %}
-          <div class="taj-snap__col-card">
+          <div class="taj-snap__col-card" data-snap-col>
             <a href="{{ col1.url }}" class="taj-snap__col-image">
               {% if section.settings.collection_1_image != blank %}
                 <img src="{{ section.settings.collection_1_image | image_url: width: 800 }}" alt="{{ col1.title | escape }}" loading="lazy">
@@ -200,7 +346,7 @@
 
         {% if section.settings.collection_2 != blank %}
           {% assign col2 = section.settings.collection_2 %}
-          <div class="taj-snap__col-card">
+          <div class="taj-snap__col-card" data-snap-col>
             <a href="{{ col2.url }}" class="taj-snap__col-image">
               {% if section.settings.collection_2_image != blank %}
                 <img src="{{ section.settings.collection_2_image | image_url: width: 800 }}" alt="{{ col2.title | escape }}" loading="lazy">
@@ -221,7 +367,7 @@
 
   {%- comment -%} Panel 3: Image Banner 1 {%- endcomment -%}
   {% if section.settings.banner_1_image != blank %}
-    <div class="taj-snap__panel">
+    <div class="taj-snap__panel" data-snap-panel>
       <div class="taj-snap__media taj-snap__media--desktop">
         <img src="{{ section.settings.banner_1_image | image_url: width: 1920 }}" alt="{{ section.settings.banner_1_title | escape }}" loading="lazy">
       </div>
@@ -245,7 +391,7 @@
 
   {%- comment -%} Panel 4: Image Banner 2 {%- endcomment -%}
   {% if section.settings.banner_2_image != blank %}
-    <div class="taj-snap__panel">
+    <div class="taj-snap__panel" data-snap-panel>
       <div class="taj-snap__media taj-snap__media--desktop">
         <img src="{{ section.settings.banner_2_image | image_url: width: 1920 }}" alt="{{ section.settings.banner_2_title | escape }}" loading="lazy">
       </div>
@@ -267,7 +413,234 @@
     </div>
   {% endif %}
 
-</section>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var MOBILE_BP = 767;
+  var WHEEL_THRESHOLD = 30;
+  var COOLDOWN_MS = 900;
+
+  var dotsNav = document.querySelector('.taj-snap-dots');
+  var targets = [];
+  var currentIndex = 0;
+  var isAnimating = false;
+  var cooldownId = null;
+  var wheelDelta = 0;
+  var wheelTimer = null;
+
+  function isMobile() {
+    return window.innerWidth <= MOBILE_BP;
+  }
+
+  function buildTargets() {
+    targets = [];
+    var panels = document.querySelectorAll('[data-snap-panel]');
+    for (var i = 0; i < panels.length; i++) {
+      var panel = panels[i];
+      if (isMobile() && panel.hasAttribute('data-snap-collections')) {
+        var cards = panel.querySelectorAll('[data-snap-col]');
+        for (var j = 0; j < cards.length; j++) {
+          targets.push(cards[j]);
+        }
+      } else {
+        targets.push(panel);
+      }
+    }
+    var footer = document.getElementById('t4s-footer');
+    if (footer) targets.push(footer);
+  }
+
+  function buildDots() {
+    if (!dotsNav) return;
+    dotsNav.innerHTML = '';
+    for (var i = 0; i < targets.length; i++) {
+      var btn = document.createElement('button');
+      btn.className = 'taj-snap-dots__dot';
+      btn.setAttribute('aria-label', 'Go to section ' + (i + 1));
+      btn.setAttribute('data-dot-index', i);
+      if (i === 0) btn.classList.add('is-active');
+      dotsNav.appendChild(btn);
+    }
+  }
+
+  function setActiveDot(index) {
+    if (!dotsNav) return;
+    var dots = dotsNav.querySelectorAll('.taj-snap-dots__dot');
+    for (var i = 0; i < dots.length; i++) {
+      if (i === index) {
+        dots[i].classList.add('is-active');
+      } else {
+        dots[i].classList.remove('is-active');
+      }
+    }
+  }
+
+  function detectIndex() {
+    var best = 0;
+    var bestDist = Infinity;
+    for (var i = 0; i < targets.length; i++) {
+      var rect = targets[i].getBoundingClientRect();
+      var dist = Math.abs(rect.top);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = i;
+      }
+    }
+    return best;
+  }
+
+  function setInView() {
+    for (var i = 0; i < targets.length; i++) {
+      var rect = targets[i].getBoundingClientRect();
+      var visible = rect.top < window.innerHeight * 0.6 && rect.bottom > window.innerHeight * 0.4;
+      if (visible) {
+        targets[i].classList.add('is-in-view');
+      } else {
+        targets[i].classList.remove('is-in-view');
+      }
+    }
+  }
+
+  function unlock() {
+    isAnimating = false;
+  }
+
+  function scrollToIndex(index) {
+    if (index < 0 || index >= targets.length || isAnimating) return;
+    isAnimating = true;
+    currentIndex = index;
+    setActiveDot(index);
+
+    targets[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    clearTimeout(cooldownId);
+
+    if ('onscrollend' in window) {
+      var done = function() {
+        window.removeEventListener('scrollend', done);
+        cooldownId = setTimeout(unlock, 120);
+      };
+      window.addEventListener('scrollend', done);
+      cooldownId = setTimeout(unlock, 1400);
+    } else {
+      cooldownId = setTimeout(unlock, COOLDOWN_MS);
+    }
+  }
+
+  function onWheel(e) {
+    var el = e.target;
+    while (el && el !== document) {
+      if (el.classList && (
+        el.classList.contains('t4s-section-header') ||
+        el.classList.contains('t4s-mega-menu') ||
+        el.hasAttribute('data-allow-scroll')
+      )) return;
+      el = el.parentNode;
+    }
+
+    e.preventDefault();
+    if (isAnimating) return;
+
+    wheelDelta += e.deltaY;
+    clearTimeout(wheelTimer);
+
+    if (Math.abs(wheelDelta) >= WHEEL_THRESHOLD) {
+      var dir = wheelDelta > 0 ? 1 : -1;
+      wheelDelta = 0;
+      currentIndex = detectIndex();
+      scrollToIndex(currentIndex + dir);
+    } else {
+      wheelTimer = setTimeout(function() { wheelDelta = 0; }, 200);
+    }
+  }
+
+  function onScroll() {
+    if (!isAnimating) {
+      currentIndex = detectIndex();
+      setActiveDot(currentIndex);
+    }
+    setInView();
+  }
+
+  function onKeydown(e) {
+    if (isAnimating) return;
+    var tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable) return;
+
+    currentIndex = detectIndex();
+
+    switch (e.key) {
+      case 'ArrowDown':
+      case 'PageDown':
+        e.preventDefault();
+        scrollToIndex(currentIndex + 1);
+        break;
+      case 'ArrowUp':
+      case 'PageUp':
+        e.preventDefault();
+        scrollToIndex(currentIndex - 1);
+        break;
+      case 'Home':
+        e.preventDefault();
+        scrollToIndex(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        scrollToIndex(targets.length - 1);
+        break;
+    }
+  }
+
+  function onDotClick(e) {
+    var btn = e.target.closest('.taj-snap-dots__dot');
+    if (!btn) return;
+    var idx = parseInt(btn.getAttribute('data-dot-index'), 10);
+    if (!isNaN(idx)) {
+      currentIndex = idx;
+      scrollToIndex(idx);
+    }
+  }
+
+  var resizeTimer;
+  function onResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      buildTargets();
+      buildDots();
+      currentIndex = detectIndex();
+      setActiveDot(currentIndex);
+      setInView();
+    }, 250);
+  }
+
+  function init() {
+    buildTargets();
+    buildDots();
+    setInView();
+
+    if (targets.length > 0) {
+      targets[0].classList.add('is-in-view');
+    }
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('keydown', onKeydown);
+    window.addEventListener('resize', onResize);
+    if (dotsNav) dotsNav.addEventListener('click', onDotClick);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
 
 {% schema %}
 {

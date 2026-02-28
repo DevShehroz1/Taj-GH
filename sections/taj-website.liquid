@@ -523,23 +523,24 @@
       }
     }
 
-    var snapWrapper = document.querySelector('.taj-snap');
-    if (snapWrapper && snapWrapper.parentElement) {
-      var sibling = snapWrapper.parentElement.nextElementSibling;
-      var footer = document.getElementById('t4s-footer');
-      while (sibling) {
-        if (sibling === footer || sibling.id === 't4s-footer') break;
-        if (sibling.offsetHeight > 0) {
-          sibling.classList.add('taj-extra-snap');
-          targets.push(sibling);
+    var mainEl = document.getElementById('MainContent');
+    var footer = document.getElementById('t4s-footer');
+    if (mainEl) {
+      var children = mainEl.children;
+      var foundSnap = false;
+      for (var i = 0; i < children.length; i++) {
+        var child = children[i];
+        if (child.querySelector('.taj-snap') || child.querySelector('[data-snap-panel]')) {
+          foundSnap = true;
+          continue;
         }
-        sibling = sibling.nextElementSibling;
+        if (foundSnap && child.children.length > 0) {
+          child.classList.add('taj-extra-snap');
+          targets.push(child);
+        }
       }
-      if (footer) targets.push(footer);
-    } else {
-      var footer = document.getElementById('t4s-footer');
-      if (footer) targets.push(footer);
     }
+    if (footer) targets.push(footer);
   }
 
   function buildDots() {

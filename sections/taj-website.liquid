@@ -422,9 +422,10 @@
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   var MOBILE_BP = 767;
-  var WHEEL_THRESHOLD = 30;
-  var COOLDOWN_MS = 900;
+  var WHEEL_THRESHOLD = 50;
+  var COOLDOWN_MS = 1000;
 
+  var htmlEl = document.documentElement;
   var dotsNav = document.querySelector('.taj-snap-dots');
   var targets = [];
   var currentIndex = 0;
@@ -432,9 +433,27 @@
   var cooldownId = null;
   var wheelDelta = 0;
   var wheelTimer = null;
+  var scrollRAF = null;
+  var lastStableIndex = 0;
+
+  var touchStartY = 0;
+  var touchCooldown = false;
+  var touchCooldownId = null;
 
   function isMobile() {
     return window.innerWidth <= MOBILE_BP;
+  }
+
+  function isInsideHeader(el) {
+    while (el && el !== document) {
+      if (el.classList && (
+        el.classList.contains('t4s-section-header') ||
+        el.classList.contains('t4s-mega-menu') ||
+        el.hasAttribute('data-allow-scroll')
+      )) return true;
+      el = el.parentNode;
+    }
+    return false;
   }
 
   function buildTargets() {
@@ -513,35 +532,38 @@
   function scrollToIndex(index) {
     if (index < 0 || index >= targets.length || isAnimating) return;
     isAnimating = true;
+    lastStableIndex = currentIndex;
     currentIndex = index;
     setActiveDot(index);
 
-    targets[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    htmlEl.style.scrollSnapType = 'none';
+
+    var rect = targets[index].getBoundingClientRect();
+    var absTop = rect.top + (window.pageYOffset || htmlEl.scrollTop);
+    window.scrollTo({ top: absTop, behavior: 'smooth' });
 
     clearTimeout(cooldownId);
+
+    function finish() {
+      htmlEl.style.scrollSnapType = '';
+      setTimeout(unlock, 60);
+    }
 
     if ('onscrollend' in window) {
       var done = function() {
         window.removeEventListener('scrollend', done);
-        cooldownId = setTimeout(unlock, 120);
+        clearTimeout(cooldownId);
+        finish();
       };
       window.addEventListener('scrollend', done);
-      cooldownId = setTimeout(unlock, 1400);
+      cooldownId = setTimeout(finish, 1400);
     } else {
-      cooldownId = setTimeout(unlock, COOLDOWN_MS);
+      cooldownId = setTimeout(finish, COOLDOWN_MS);
     }
   }
 
   function onWheel(e) {
-    var el = e.target;
-    while (el && el !== document) {
-      if (el.classList && (
-        el.classList.contains('t4s-section-header') ||
-        el.classList.contains('t4s-mega-menu') ||
-        el.hasAttribute('data-allow-scroll')
-      )) return;
-      el = el.parentNode;
-    }
+    if (isInsideHeader(e.target)) return;
 
     e.preventDefault();
     if (isAnimating) return;
@@ -560,11 +582,54 @@
   }
 
   function onScroll() {
-    if (!isAnimating) {
-      currentIndex = detectIndex();
-      setActiveDot(currentIndex);
+    if (scrollRAF) return;
+    scrollRAF = requestAnimationFrame(function() {
+      scrollRAF = null;
+
+      if (touchCooldown && !isAnimating) {
+        var detected = detectIndex();
+        if (Math.abs(detected - lastStableIndex) > 1) {
+          var corrected = lastStableIndex + (detected > lastStableIndex ? 1 : -1);
+          touchCooldown = false;
+          clearTimeout(touchCooldownId);
+          scrollToIndex(corrected);
+          return;
+        }
+      }
+
+      if (!isAnimating) {
+        currentIndex = detectIndex();
+        setActiveDot(currentIndex);
+      }
+      setInView();
+    });
+  }
+
+  function onTouchStart(e) {
+    if (isAnimating || touchCooldown) return;
+    touchStartY = e.touches[0].clientY;
+  }
+
+  function onTouchMove(e) {
+    if (isInsideHeader(e.target)) return;
+    if (isAnimating || touchCooldown) {
+      e.preventDefault();
     }
-    setInView();
+  }
+
+  function onTouchEnd(e) {
+    if (isAnimating || touchCooldown) return;
+    if (isInsideHeader(e.target)) return;
+
+    var deltaY = touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(deltaY) > 30) {
+      lastStableIndex = detectIndex();
+      touchCooldown = true;
+      clearTimeout(touchCooldownId);
+      touchCooldownId = setTimeout(function() {
+        touchCooldown = false;
+      }, 900);
+    }
   }
 
   function onKeydown(e) {
@@ -631,6 +696,11 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('keydown', onKeydown);
     window.addEventListener('resize', onResize);
+
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+
     if (dotsNav) dotsNav.addEventListener('click', onDotClick);
   }
 

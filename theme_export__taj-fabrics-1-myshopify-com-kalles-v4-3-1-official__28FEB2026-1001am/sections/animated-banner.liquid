@@ -1,0 +1,383 @@
+{%- liquid
+  assign section_id = section.id
+  assign heading = section.settings.heading
+  assign subheading = section.settings.subheading
+  assign button_text = section.settings.button_text
+  assign button_link = section.settings.button_link
+  assign desktop_height = section.settings.desktop_height
+  assign mobile_height = section.settings.mobile_height
+  assign overlay_opacity = section.settings.overlay_opacity | divided_by: 100.0
+  assign text_position = section.settings.text_position
+  assign animation_style = section.settings.animation_style
+-%}
+
+<section
+  id="revealed-banner-{{ section_id }}"
+  class="revealed-banner revealed-banner--{{ animation_style }}"
+  role="banner"
+>
+  <div
+    class="revealed-banner__inner"
+    style="--desktop-height: {{ desktop_height }}px; --mobile-height: {{ mobile_height }}px;"
+  >
+    <div class="revealed-banner__media" style="--overlay-opacity: {{ overlay_opacity }};">
+      {%- if section.settings.image != blank -%}
+        {{
+          section.settings.image
+          | image_url: width: 2250
+          | image_tag:
+            loading: 'eager',
+            decoding: 'async',
+            class: 'revealed-banner__img',
+            widths: '375, 750, 1080, 1350, 1600, 2000, 2250',
+            sizes: '100vw',
+            fetchpriority: 'high'
+        }}
+      {%- else -%}
+        {{ 'hero-apparel-1' | placeholder_svg_tag: 'revealed-banner__placeholder' }}
+      {%- endif -%}
+      <div class="revealed-banner__overlay" aria-hidden="true"></div>
+    </div>
+
+    <div class="revealed-banner__content revealed-banner__content--{{ text_position }}">
+      <div class="revealed-banner__content-inner">
+        {%- if heading != blank -%}
+          <h2 class="revealed-banner__heading">{{ heading }}</h2>
+        {%- endif -%}
+        {%- if subheading != blank -%}
+          <p class="revealed-banner__subheading">{{ subheading }}</p>
+        {%- endif -%}
+        {%- if button_text != blank and button_link != blank -%}
+          <a href="{{ button_link }}" class="revealed-banner__btn">
+            {{ button_text }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #revealed-banner-{{ section_id }} {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__inner {
+    position: relative;
+    width: 100%;
+    min-height: var(--mobile-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (min-width: 769px) {
+    #revealed-banner-{{ section_id }} .revealed-banner__inner {
+      min-height: var(--desktop-height);
+    }
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__img,
+  #revealed-banner-{{ section_id }} .revealed-banner__placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: {{ section.settings.image_position }};
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, var(--overlay-opacity));
+    pointer-events: none;
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__content {
+    position: relative;
+    z-index: 2;
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__content--left {
+    text-align: left;
+    margin-right: auto;
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__content--right {
+    text-align: right;
+    margin-left: auto;
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__content-inner {
+    max-width: 600px;
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__heading {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: {{ section.settings.text_color }};
+    margin: 0 0 16px 0;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__subheading {
+    font-size: clamp(14px, 2vw, 18px);
+    line-height: 1.5;
+    color: {{ section.settings.text_color }};
+    margin: 0 0 24px 0;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: {{ section.settings.button_bg }};
+    color: {{ section.settings.button_text_color }};
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: opacity 0.2s, transform 0.2s;
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  #revealed-banner-{{ section_id }} .revealed-banner__btn:hover {
+    opacity: 0.9;
+  }
+
+  /* --- Animation: Reveal (clip-path) --- */
+  #revealed-banner-{{ section_id }}.revealed-banner--reveal .revealed-banner__media {
+    clip-path: inset(0 0 100% 0);
+    animation: revealed-banner-reveal 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  #revealed-banner-{{ section_id }}.revealed-banner--reveal .revealed-banner__heading {
+    animation: revealed-banner-fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+  }
+
+  #revealed-banner-{{ section_id }}.revealed-banner--reveal .revealed-banner__subheading {
+    animation: revealed-banner-fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.45s forwards;
+  }
+
+  #revealed-banner-{{ section_id }}.revealed-banner--reveal .revealed-banner__btn {
+    animation: revealed-banner-fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s forwards;
+  }
+
+  /* --- Animation: Fade slide --- */
+  #revealed-banner-{{ section_id }}.revealed-banner--fade-slide .revealed-banner__img,
+  #revealed-banner-{{ section_id }}.revealed-banner--fade-slide .revealed-banner__placeholder {
+    opacity: 0;
+    transform: scale(1.05);
+    animation: revealed-banner-zoom-in 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  #revealed-banner-{{ section_id }}.revealed-banner--fade-slide .revealed-banner__heading {
+    animation: revealed-banner-fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+  }
+
+  #revealed-banner-{{ section_id }}.revealed-banner--fade-slide .revealed-banner__subheading {
+    animation: revealed-banner-fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.55s forwards;
+  }
+
+  #revealed-banner-{{ section_id }}.revealed-banner--fade-slide .revealed-banner__btn {
+    animation: revealed-banner-fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.7s forwards;
+  }
+
+  /* --- Animation: Split reveal (opens from center) --- */
+  #revealed-banner-{{ section_id }}.revealed-banner--split .revealed-banner__media {
+    clip-path: polygon(49% 0, 51% 0, 51% 100%, 49% 100%);
+    animation: revealed-banner-split-open 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  #revealed-banner-{{ section_id }}.revealed-banner--split .revealed-banner__heading {
+    animation: revealed-banner-fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
+  }
+
+  #revealed-banner-{{ section_id }}.revealed-banner--split .revealed-banner__subheading {
+    animation: revealed-banner-fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.65s forwards;
+  }
+
+  #revealed-banner-{{ section_id }}.revealed-banner--split .revealed-banner__btn {
+    animation: revealed-banner-fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards;
+  }
+
+  @keyframes revealed-banner-reveal {
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes revealed-banner-fade-up {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes revealed-banner-zoom-in {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes revealed-banner-split-open {
+    to {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Animated Reveal Banner",
+  "tag": "section",
+  "class": "section-revealed-banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Banner image"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "default": "center center",
+      "options": [
+        { "value": "top left", "label": "Top left" },
+        { "value": "top center", "label": "Top center" },
+        { "value": "top right", "label": "Top right" },
+        { "value": "center left", "label": "Center left" },
+        { "value": "center center", "label": "Center" },
+        { "value": "center right", "label": "Center right" },
+        { "value": "bottom left", "label": "Bottom left" },
+        { "value": "bottom center", "label": "Bottom center" },
+        { "value": "bottom right", "label": "Bottom right" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "label": "Desktop height",
+      "min": 400,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "label": "Mobile height",
+      "min": 300,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "True style is born of authenticity"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "An unwavering commitment to being oneself."
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "select",
+      "id": "animation_style",
+      "label": "Animation style",
+      "default": "reveal",
+      "info": "Reveal: Image unveils from bottom. Fade slide: Zoom + fade. Split: Left/right panels.",
+      "options": [
+        { "value": "reveal", "label": "Reveal (clip-path unveil)" },
+        { "value": "fade-slide", "label": "Fade & zoom" },
+        { "value": "split", "label": "Split reveal" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Animated Reveal Banner"
+    }
+  ]
+}
+{% endschema %}

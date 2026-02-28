@@ -1,0 +1,424 @@
+<style>
+  .taj-snap {
+    height: 100vh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .taj-snap::-webkit-scrollbar { display: none; }
+
+  .taj-snap__panel {
+    scroll-snap-align: start;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Video / Image banner panels */
+  .taj-snap__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .taj-snap__media video,
+  .taj-snap__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .taj-snap__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 60px;
+    text-align: center;
+    background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.35) 100%);
+  }
+  .taj-snap__title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0 0 8px;
+  }
+  .taj-snap__cta {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+  .taj-snap__cta:hover { opacity: 1; }
+
+  /* Two-collection grid panel */
+  .taj-snap__panel--collections {
+    padding-top: 60px;
+  }
+  .taj-snap__collections {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    gap: 4px;
+  }
+  .taj-snap__col-card {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .taj-snap__col-image {
+    flex: 1;
+    overflow: hidden;
+  }
+  .taj-snap__col-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .taj-snap__col-info {
+    padding: 20px 16px 28px;
+    text-align: center;
+    background: #fff;
+  }
+  .taj-snap__col-title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #000;
+    margin: 0 0 6px;
+  }
+  .taj-snap__col-cta {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #000;
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .taj-snap__col-cta:hover { opacity: 1; }
+
+  /* Desktop/mobile image switching for banners */
+  .taj-snap__media--desktop { display: block; }
+  .taj-snap__media--mobile { display: none; }
+
+  @media (max-width: 767px) {
+    .taj-snap__media--desktop { display: none; }
+    .taj-snap__media--mobile { display: block; }
+
+    /* Collections: each becomes its own full-screen snap view on mobile */
+    .taj-snap__panel--collections {
+      height: auto;
+      overflow: visible;
+      scroll-snap-align: none;
+    }
+    .taj-snap__collections {
+      flex-direction: column;
+      gap: 0;
+      height: auto;
+    }
+    .taj-snap__col-card {
+      scroll-snap-align: start;
+      height: 100vh;
+      flex: none;
+    }
+    .taj-snap__col-info { padding: 14px 10px 20px; }
+    .taj-snap__col-title { font-size: 11px; letter-spacing: 1.5px; }
+    .taj-snap__col-cta { font-size: 10px; }
+    .taj-snap__title { font-size: 12px; }
+    .taj-snap__cta { font-size: 11px; }
+    .taj-snap__overlay { padding-bottom: 40px; }
+  }
+</style>
+
+<section class="taj-snap" data-section-id="{{ section.id }}">
+
+  {%- comment -%} Panel 1: Video Banner {%- endcomment -%}
+  {% if section.settings.video_1 != blank or section.settings.video_1_url != blank %}
+    <div class="taj-snap__panel">
+      <div class="taj-snap__media">
+        {% if section.settings.video_1 != blank %}
+          {{ section.settings.video_1 | video_tag: autoplay: true, muted: true, loop: true, playsinline: true, controls: false }}
+        {% elsif section.settings.video_1_url != blank %}
+          <video autoplay muted loop playsinline>
+            <source src="{{ section.settings.video_1_url }}" type="video/mp4">
+          </video>
+        {% endif %}
+      </div>
+      <div class="taj-snap__overlay">
+        {% if section.settings.video_1_title != blank %}
+          <p class="taj-snap__title">{{ section.settings.video_1_title }}</p>
+        {% endif %}
+        {% if section.settings.video_1_cta_text != blank %}
+          <a href="{{ section.settings.video_1_cta_link }}" class="taj-snap__cta">{{ section.settings.video_1_cta_text }}</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {%- comment -%} Panel 2: Two Collections — side by side on desktop, each snaps on mobile {%- endcomment -%}
+  {% if section.settings.collection_1 != blank or section.settings.collection_2 != blank %}
+    <div class="taj-snap__panel taj-snap__panel--collections">
+      <div class="taj-snap__collections">
+
+        {% if section.settings.collection_1 != blank %}
+          {% assign col1 = section.settings.collection_1 %}
+          <div class="taj-snap__col-card">
+            <a href="{{ col1.url }}" class="taj-snap__col-image">
+              {% if section.settings.collection_1_image != blank %}
+                <img src="{{ section.settings.collection_1_image | image_url: width: 800 }}" alt="{{ col1.title | escape }}" loading="lazy">
+              {% elsif col1.image %}
+                <img src="{{ col1.image | image_url: width: 800 }}" alt="{{ col1.title | escape }}" loading="lazy">
+              {% endif %}
+            </a>
+            <div class="taj-snap__col-info">
+              <p class="taj-snap__col-title">{{ section.settings.collection_1_heading | default: col1.title }}</p>
+              <a href="{{ col1.url }}" class="taj-snap__col-cta">{{ section.settings.collection_1_cta | default: 'Explore' }}</a>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if section.settings.collection_2 != blank %}
+          {% assign col2 = section.settings.collection_2 %}
+          <div class="taj-snap__col-card">
+            <a href="{{ col2.url }}" class="taj-snap__col-image">
+              {% if section.settings.collection_2_image != blank %}
+                <img src="{{ section.settings.collection_2_image | image_url: width: 800 }}" alt="{{ col2.title | escape }}" loading="lazy">
+              {% elsif col2.image %}
+                <img src="{{ col2.image | image_url: width: 800 }}" alt="{{ col2.title | escape }}" loading="lazy">
+              {% endif %}
+            </a>
+            <div class="taj-snap__col-info">
+              <p class="taj-snap__col-title">{{ section.settings.collection_2_heading | default: col2.title }}</p>
+              <a href="{{ col2.url }}" class="taj-snap__col-cta">{{ section.settings.collection_2_cta | default: 'Discover' }}</a>
+            </div>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  {% endif %}
+
+  {%- comment -%} Panel 3: Image Banner 1 {%- endcomment -%}
+  {% if section.settings.banner_1_image != blank %}
+    <div class="taj-snap__panel">
+      <div class="taj-snap__media taj-snap__media--desktop">
+        <img src="{{ section.settings.banner_1_image | image_url: width: 1920 }}" alt="{{ section.settings.banner_1_title | escape }}" loading="lazy">
+      </div>
+      <div class="taj-snap__media taj-snap__media--mobile">
+        {% if section.settings.banner_1_image_mobile != blank %}
+          <img src="{{ section.settings.banner_1_image_mobile | image_url: width: 800 }}" alt="{{ section.settings.banner_1_title | escape }}" loading="lazy">
+        {% else %}
+          <img src="{{ section.settings.banner_1_image | image_url: width: 800 }}" alt="{{ section.settings.banner_1_title | escape }}" loading="lazy">
+        {% endif %}
+      </div>
+      <div class="taj-snap__overlay">
+        {% if section.settings.banner_1_title != blank %}
+          <p class="taj-snap__title">{{ section.settings.banner_1_title }}</p>
+        {% endif %}
+        {% if section.settings.banner_1_cta_text != blank %}
+          <a href="{{ section.settings.banner_1_cta_link }}" class="taj-snap__cta">{{ section.settings.banner_1_cta_text }}</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {%- comment -%} Panel 4: Image Banner 2 {%- endcomment -%}
+  {% if section.settings.banner_2_image != blank %}
+    <div class="taj-snap__panel">
+      <div class="taj-snap__media taj-snap__media--desktop">
+        <img src="{{ section.settings.banner_2_image | image_url: width: 1920 }}" alt="{{ section.settings.banner_2_title | escape }}" loading="lazy">
+      </div>
+      <div class="taj-snap__media taj-snap__media--mobile">
+        {% if section.settings.banner_2_image_mobile != blank %}
+          <img src="{{ section.settings.banner_2_image_mobile | image_url: width: 800 }}" alt="{{ section.settings.banner_2_title | escape }}" loading="lazy">
+        {% else %}
+          <img src="{{ section.settings.banner_2_image | image_url: width: 800 }}" alt="{{ section.settings.banner_2_title | escape }}" loading="lazy">
+        {% endif %}
+      </div>
+      <div class="taj-snap__overlay">
+        {% if section.settings.banner_2_title != blank %}
+          <p class="taj-snap__title">{{ section.settings.banner_2_title }}</p>
+        {% endif %}
+        {% if section.settings.banner_2_cta_text != blank %}
+          <a href="{{ section.settings.banner_2_cta_link }}" class="taj-snap__cta">{{ section.settings.banner_2_cta_text }}</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+
+{% schema %}
+{
+  "name": "Snap Scroll Lookbook",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Panel 1 — Video Banner"
+    },
+    {
+      "type": "video",
+      "id": "video_1",
+      "label": "Video (uploaded)"
+    },
+    {
+      "type": "text",
+      "id": "video_1_url",
+      "label": "Video URL (external MP4)",
+      "info": "Use this if not uploading a video above"
+    },
+    {
+      "type": "text",
+      "id": "video_1_title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "video_1_cta_text",
+      "label": "CTA text",
+      "default": "Discover"
+    },
+    {
+      "type": "url",
+      "id": "video_1_cta_link",
+      "label": "CTA link"
+    },
+    {
+      "type": "header",
+      "content": "Panel 2 — Two Collections"
+    },
+    {
+      "type": "collection",
+      "id": "collection_1",
+      "label": "Collection 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_1_image",
+      "label": "Collection 1 image",
+      "info": "Override collection image"
+    },
+    {
+      "type": "text",
+      "id": "collection_1_heading",
+      "label": "Collection 1 heading"
+    },
+    {
+      "type": "text",
+      "id": "collection_1_cta",
+      "label": "Collection 1 CTA text",
+      "default": "Explore"
+    },
+    {
+      "type": "collection",
+      "id": "collection_2",
+      "label": "Collection 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_2_image",
+      "label": "Collection 2 image",
+      "info": "Override collection image"
+    },
+    {
+      "type": "text",
+      "id": "collection_2_heading",
+      "label": "Collection 2 heading"
+    },
+    {
+      "type": "text",
+      "id": "collection_2_cta",
+      "label": "Collection 2 CTA text",
+      "default": "Discover"
+    },
+    {
+      "type": "header",
+      "content": "Panel 3 — Image Banner 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_1_image",
+      "label": "Banner image (desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_1_image_mobile",
+      "label": "Banner image (mobile)",
+      "info": "Optional — falls back to desktop image if empty"
+    },
+    {
+      "type": "text",
+      "id": "banner_1_title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "banner_1_cta_text",
+      "label": "CTA text",
+      "default": "Discover"
+    },
+    {
+      "type": "url",
+      "id": "banner_1_cta_link",
+      "label": "CTA link"
+    },
+    {
+      "type": "header",
+      "content": "Panel 4 — Image Banner 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_2_image",
+      "label": "Banner image (desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_2_image_mobile",
+      "label": "Banner image (mobile)",
+      "info": "Optional — falls back to desktop image if empty"
+    },
+    {
+      "type": "text",
+      "id": "banner_2_title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "banner_2_cta_text",
+      "label": "CTA text",
+      "default": "Discover"
+    },
+    {
+      "type": "url",
+      "id": "banner_2_cta_link",
+      "label": "CTA link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Snap Scroll Lookbook"
+    }
+  ]
+}
+{% endschema %}

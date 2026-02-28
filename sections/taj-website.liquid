@@ -182,6 +182,31 @@
   .taj-snap__media--desktop { display: block; }
   .taj-snap__media--mobile  { display: none;  }
 
+  /* ═══ EXTRA SECTIONS AS SNAP TARGETS ═══ */
+
+  .taj-extra-snap {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    box-sizing: border-box;
+    padding: 60px 0;
+  }
+
+  .taj-extra-snap > * {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease 0.1s, transform 0.8s ease 0.1s;
+  }
+  .taj-extra-snap.is-in-view > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   /* ═══ FOOTER AS LAST SNAP TARGET ═══ */
 
   html.taj-snap-page #t4s-footer {
@@ -306,12 +331,13 @@
 
   @media (prefers-reduced-motion: reduce) {
     html.taj-snap-page { scroll-snap-type: none !important; scroll-behavior: auto !important; }
-    .taj-snap__panel, .taj-snap__col-card, html.taj-snap-page #t4s-footer {
+    .taj-snap__panel, .taj-snap__col-card, .taj-extra-snap, html.taj-snap-page #t4s-footer {
       scroll-snap-align: none !important;
       scroll-snap-stop: normal !important;
     }
     .taj-snap__overlay > *,
-    .taj-snap__col-info {
+    .taj-snap__col-info,
+    .taj-extra-snap > * {
       opacity: 1 !important;
       transform: none !important;
       transition: none !important;
@@ -496,8 +522,24 @@
         targets.push(panel);
       }
     }
-    var footer = document.getElementById('t4s-footer');
-    if (footer) targets.push(footer);
+
+    var snapWrapper = document.querySelector('.taj-snap');
+    if (snapWrapper && snapWrapper.parentElement) {
+      var sibling = snapWrapper.parentElement.nextElementSibling;
+      var footer = document.getElementById('t4s-footer');
+      while (sibling) {
+        if (sibling === footer || sibling.id === 't4s-footer') break;
+        if (sibling.offsetHeight > 0) {
+          sibling.classList.add('taj-extra-snap');
+          targets.push(sibling);
+        }
+        sibling = sibling.nextElementSibling;
+      }
+      if (footer) targets.push(footer);
+    } else {
+      var footer = document.getElementById('t4s-footer');
+      if (footer) targets.push(footer);
+    }
   }
 
   function buildDots() {

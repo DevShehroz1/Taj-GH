@@ -115,6 +115,7 @@
         "bl_image_i4yF7f",
         "bl_text_nhTBWn"
       ],
+      "disabled": true,
       "name": "Image with text",
       "settings": {
         "design_heading": "1",

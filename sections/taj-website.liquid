@@ -551,13 +551,26 @@
     }
   }
 
+  var WHITE_LOGO = 'https://cdn.shopify.com/s/files/1/0720/2868/4423/files/54548548.png?v=1771260571';
+
   function updateHeaderColor(index) {
+    var logo = document.querySelector('.header__normal-logo');
+    if (logo && !logo.dataset.originalSrc) {
+      logo.dataset.originalSrc = logo.src;
+      logo.dataset.originalSrcset = logo.srcset || '';
+    }
+
     if (index === 0) {
       htmlEl.classList.add('taj-header-light');
       htmlEl.classList.remove('taj-header-dark');
+      if (logo) { logo.src = WHITE_LOGO; logo.srcset = ''; }
     } else {
       htmlEl.classList.remove('taj-header-light');
       htmlEl.classList.add('taj-header-dark');
+      if (logo && logo.dataset.originalSrc) {
+        logo.src = logo.dataset.originalSrc;
+        logo.srcset = logo.dataset.originalSrcset;
+      }
     }
   }
 

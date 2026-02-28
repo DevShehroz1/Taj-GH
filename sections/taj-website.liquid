@@ -34,6 +34,20 @@
     z-index: 500 !important;
     margin: 0 !important;
     box-sizing: border-box;
+    transition: --h-text-color 0.3s ease, --h-bg-color 0.3s ease;
+  }
+
+  @media (min-width: 768px) {
+    html.taj-snap-page.taj-header-light .t4s-header__wrapper {
+      --h-text-color: #fff !important;
+      --h-text-color-hover: rgba(255,255,255,0.7) !important;
+      --h-bg-color: transparent !important;
+    }
+    html.taj-snap-page.taj-header-dark .t4s-header__wrapper {
+      --h-text-color: #000 !important;
+      --h-text-color-hover: rgba(0,0,0,0.6) !important;
+      --h-bg-color: rgba(255,255,255,0.95) !important;
+    }
   }
 
   html.taj-snap-page #shopify-section-announcement-bar,
@@ -537,6 +551,16 @@
     }
   }
 
+  function updateHeaderColor(index) {
+    if (index === 0) {
+      htmlEl.classList.add('taj-header-light');
+      htmlEl.classList.remove('taj-header-dark');
+    } else {
+      htmlEl.classList.remove('taj-header-light');
+      htmlEl.classList.add('taj-header-dark');
+    }
+  }
+
   function unlock() {
     isAnimating = false;
   }
@@ -547,6 +571,7 @@
     lastStableIndex = currentIndex;
     currentIndex = index;
     setActiveDot(index);
+    updateHeaderColor(index);
 
     htmlEl.style.scrollSnapType = 'none';
 
@@ -612,6 +637,7 @@
       if (!isAnimating) {
         currentIndex = detectIndex();
         setActiveDot(currentIndex);
+        updateHeaderColor(currentIndex);
       }
       setInView();
     });
@@ -691,6 +717,7 @@
       buildDots();
       currentIndex = detectIndex();
       setActiveDot(currentIndex);
+      updateHeaderColor(currentIndex);
       setInView();
     }, 250);
   }
@@ -699,6 +726,7 @@
     buildTargets();
     buildDots();
     setInView();
+    updateHeaderColor(0);
 
     if (targets.length > 0) {
       targets[0].classList.add('is-in-view');

@@ -349,7 +349,20 @@
 
 {%- comment -%} YSL-STYLE COLLECTION PRODUCT GRID (mobile + desktop) {%- endcomment -%}
 <style>
-.t4s-collection-page .t4s-products{background:transparent}
+/* Full width + reduced gap between cards */
+.t4s-collection-page .t4s-container,
+.t4s-collection-page .t4s-container-wrap,
+.t4s-collection-page .t4s-section-inner{padding-left:20px!important;padding-right:20px!important;max-width:100%!important}
+.t4s-collection-page .t4s-products{
+  background:transparent;
+  margin-left:0!important;margin-right:0!important;
+  gap:16px 16px!important;
+  --ts-gutter-x:16px!important;--ts-gutter-y:16px!important
+}
+.t4s-collection-page .t4s-product{margin-bottom:0!important;padding-left:8px!important;padding-right:8px!important}
+.t4s-collection-page .t4s-row{margin-left:-8px!important;margin-right:-8px!important}
+.t4s-collection-page .t4s-products[class*="t4s-gx"],
+.t4s-collection-page .t4s-products[class*="t4s-gy"]{--ts-gutter-x:16px!important;--ts-gutter-y:16px!important}
 .t4s-collection-page .t4s-product-wrapper{background:#fff}
 .t4s-collection-page .t4s-product-inner{
   background:#f8f8f8;border-radius:0;overflow:hidden
@@ -389,9 +402,12 @@
 }
 
 @media(max-width:767px){
+  .t4s-collection-page .t4s-container,
+  .t4s-collection-page .t4s-container-wrap{padding-left:16px!important;padding-right:16px!important}
   .t4s-collection-page .t4s-products{
-    padding:0 20px!important;gap:20px 20px!important
+    padding:0!important;gap:12px 12px!important;margin-left:0!important;margin-right:0!important
   }
+  .t4s-collection-page .t4s-product{padding-left:0!important;padding-right:0!important}
   .t4s-collection-page .t4s-product-wrapper{padding:0!important}
   .t4s-collection-page .t4s-product-inner{min-height:auto}
   .t4s-collection-page .t4s-product-info{padding:12px 0 0!important}

@@ -3,6 +3,21 @@
 /-----------------------------------------------------------------------------*/
 /*---------------- Global Custom CSS -------------------*/
 
+/* Remove side margins (set from theme) */
+.t4s-container,
+.t4s-container-wrap,
+.t4s-section-inner,
+.t4s-main-area .t4s-container,
+.t4s-main-area .t4s-container-wrap {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+.t4s-row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
 
 /*---------------- Custom CSS for only desktop -------------------*/
 @media (min-width: 1025px) {

@@ -477,9 +477,7 @@ endif -%}
                     <a class="t4s-ch" data-no-instant rel="nofollow" href="{{ page_delivery.url }}" data-class="t4s-mfp-btn-close-inline" data-id="t4s-pr-popup__delivery" data-storageid="{{ page_delivery.url }}" data-open-mfp-ajax data-style="max-width:950px" data-mfp-src="{{ page_delivery.url }}/?section_id=ajax_popup">{{ 'products.product.delivery_return' | t }}</a>
                     {%- endif -%}
 
-                    {%- if bk_stts.ask -%}
-                    <a class="t4s-ch" data-no-instant rel="nofollow" href="{{ product.url }}" data-class="t4s-mfp-btn-close-inline" data-id="t4s-pr-popup__contact" data-storageid="contact_product{{ product.id }}" data-open-mfp-ajax data-style="max-width:570px" data-mfp-src="{{ product.url }}/?section_id=ajax_popup" data-phone='{{ bk_stts.phone }}'>{{ 'products.product.ask_question' | t }}</a>
-                    {%- endif -%}
+                    {%- comment -%} Ask a question link removed — replaced by CONTACT US drawer {%- endcomment -%}
 
                   </div>
 

@@ -1026,8 +1026,10 @@ body.ysl-no-scroll{overflow:hidden!important;position:fixed!important;width:100%
   .t4s-section-main-product .t4s-swatch__title .t4s-swatch__current{font-weight:400!important;color:#666!important}
   .t4s-section-main-product .t4s-product-form__qty{display:none!important}
   .t4s-section-main-product .t4s-product-form__btn.t4s-pr-wishlist,.t4s-section-main-product .t4s-product-form__btn.t4s-pr-compare{display:none!important}
-  .t4s-section-main-product .t4s-product-form__submit{background:#000!important;color:#fff!important;border:none!important;border-radius:0!important;font-size:12px!important;font-weight:500!important;letter-spacing:2.5px!important;text-transform:uppercase!important;padding:0 20px!important;width:100%!important;height:52px!important;margin:12px 0 0!important;display:flex!important;align-items:center!important;justify-content:center!important}
+  .t4s-section-main-product .t4s-product-form__submit{background:#000!important;color:#fff!important;border:none!important;border-radius:0!important;font-size:12px!important;font-weight:500!important;letter-spacing:2.5px!important;text-transform:uppercase!important;padding:0 20px!important;width:100%!important;height:52px!important;margin:12px 0 5px!important;display:flex!important;align-items:center!important;justify-content:center!important}
   .t4s-section-main-product .t4s-product-form__submit:hover,.t4s-section-main-product .t4s-product-form__submit:active{background:#222!important;color:#fff!important}
+  .ysl-atc-outline{background:transparent!important;color:#000!important;border:1px solid #000!important;border-radius:0!important;font-size:12px!important;font-weight:500!important;letter-spacing:2.5px!important;text-transform:uppercase!important;padding:0 20px!important;width:100%!important;height:52px!important;margin:0!important;display:flex!important;align-items:center!important;justify-content:center!important;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;outline:none;box-sizing:border-box}
+  .ysl-atc-outline:hover,.ysl-atc-outline:active,.ysl-atc-outline:focus{background:transparent!important;color:#000!important;outline:none!important;box-shadow:none!important}
   .t4s-section-main-product .t4s-product-form__submit .t4s-btn-icon{display:none!important}
   .t4s-section-main-product .shopify-payment-button{display:none!important}
   .t4s-product-tabs-wrapper{display:none!important}
@@ -1065,6 +1067,21 @@ document.addEventListener('DOMContentLoaded', function() {
   var formBtns = mainProduct.querySelector('.t4s-product-form__buttons');
   if (formBtns) {
     variantObserver.observe(formBtns, { childList: true, subtree: true, characterData: true });
+  }
+
+  var atcSubmit = mainProduct.querySelector('.t4s-product-form__submit');
+  if (atcSubmit) {
+    var outlineBtn = document.createElement('button');
+    outlineBtn.type = 'button';
+    outlineBtn.className = 'ysl-atc-outline';
+    outlineBtn.textContent = 'ADD TO CART';
+    outlineBtn.addEventListener('click', function() {
+      atcSubmit.click();
+    });
+    var btnWrapper = atcSubmit.parentNode;
+    if (btnWrapper) {
+      btnWrapper.insertBefore(outlineBtn, atcSubmit.nextSibling);
+    }
   }
 
   var extraLinks = mainProduct.querySelectorAll('.t4s-extra-link .t4s-ch');

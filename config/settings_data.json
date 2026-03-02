@@ -10,6 +10,8 @@
 {
   "current": {
     "purchase_code": "Anything",
+    "custom_css_t4s": true,
+    "t4s_custom_js": true,
     "animations_reveal_on_scroll": true,
     "cus_w_bd": 1700,
     "body_bg_repeat": "default",

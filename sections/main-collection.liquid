@@ -347,6 +347,59 @@
 </script>
 {%- endif -%}
 
+{%- comment -%} YSL-STYLE COLLECTION PRODUCT GRID (mobile + desktop) {%- endcomment -%}
+<style>
+.t4s-collection-page .t4s-products{background:transparent}
+.t4s-collection-page .t4s-product-wrapper{background:#fff}
+.t4s-collection-page .t4s-product-inner{
+  background:#f8f8f8;border-radius:0;overflow:hidden
+}
+.t4s-collection-page .t4s-product-info{
+  padding:14px 0 0!important;text-align:left!important;background:#fff
+}
+.t4s-collection-page .t4s-product-info__inner{text-align:left!important}
+.t4s-collection-page .t4s-product-title,
+.t4s-collection-page .t4s-product-title a{
+  font-size:13px!important;font-weight:500!important;letter-spacing:.5px!important;
+  color:#000!important;text-transform:uppercase!important;line-height:1.4!important;
+  margin-bottom:6px!important
+}
+.t4s-collection-page .t4s-product-price,
+.t4s-collection-page .t4s-product-price span{
+  font-size:12px!important;color:#666!important;margin-bottom:8px!important
+}
+.t4s-collection-page .t4s-pr-color__item,
+.t4s-collection-page .t4s-pr-swatch__item,
+.t4s-collection-page .t4s-pr-color__item span,
+.t4s-collection-page .t4s-pr-swatch__item span{
+  width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;border-radius:50%!important
+}
+.t4s-collection-page .t4s-product-badge{top:10px!important;left:10px!important;right:auto!important}
+.t4s-collection-page .t4s-product-badge span{
+  font-size:10px!important;font-weight:500!important;letter-spacing:1px!important;
+  text-transform:uppercase!important;padding:4px 8px!important;border-radius:0!important
+}
+.t4s-collection-page .t4s-product-btns2{top:10px!important;right:10px!important;left:auto!important}
+.t4s-collection-page .t4s-product-btns2 .t4s-pr-item-btn{
+  width:36px!important;height:36px!important;border-radius:0!important;
+  background:rgba(255,255,255,.9)!important;color:#000!important
+}
+.t4s-collection-page .t4s-product-btns2 .t4s-pr-item-btn:hover{
+  background:#fff!important;color:#000!important
+}
+
+@media(max-width:767px){
+  .t4s-collection-page .t4s-products{
+    padding:0 20px!important;gap:20px 20px!important
+  }
+  .t4s-collection-page .t4s-product-wrapper{padding:0!important}
+  .t4s-collection-page .t4s-product-inner{min-height:auto}
+  .t4s-collection-page .t4s-product-info{padding:12px 0 0!important}
+  .t4s-collection-page .t4s-product-title,
+  .t4s-collection-page .t4s-product-title a{font-size:12px!important}
+}
+</style>
+
 {%- schema -%}
   {
     "name": "Main collection",

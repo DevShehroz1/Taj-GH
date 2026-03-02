@@ -1177,14 +1177,15 @@ document.addEventListener('DOMContentLoaded', function() {
   contactBtn.type = 'button';
   contactBtn.textContent = 'CONTACT US';
   contactBtn.addEventListener('click', function() {
-    var askLink = mainProduct.querySelector('.t4s-extra-link [data-id="t4s-pr-popup__contact"]');
-    if (askLink) {
-      askLink.click();
-    } else {
-      openDrawer('CONTACT US',
-        '<p>For questions about this product, please email us at ' +
-        '<a href="mailto:info@tajofficial.com" style="color:#000;text-decoration:underline;">info@tajofficial.com</a></p>');
-    }
+    openDrawer('CONTACT US',
+      '<p style="margin-bottom:24px">FOR ANY QUESTIONS ABOUT THIS PRODUCT OR YOUR ORDER, PLEASE DON\'T HESITATE TO REACH OUT.</p>' +
+      '<div style="border-top:1px solid #e0e0e0;padding-top:16px;margin-top:16px">' +
+        '<p style="margin-bottom:12px"><strong>EMAIL</strong></p>' +
+        '<p style="margin-bottom:24px"><a href="mailto:info@tajofficial.com" style="color:#000;text-decoration:underline">INFO@TAJOFFICIAL.COM</a></p>' +
+        '<p style="margin-bottom:12px"><strong>WHATSAPP</strong></p>' +
+        '<p style="margin-bottom:24px"><a href="https://wa.me/923000000000" style="color:#000;text-decoration:underline">+92 300 000 0000</a></p>' +
+      '</div>'
+    );
   });
   linksDiv.appendChild(moreBtn);
   linksDiv.appendChild(contactBtn);

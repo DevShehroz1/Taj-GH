@@ -294,13 +294,6 @@
   /* ═══ MOBILE — max-width: 767px ═══ */
 
   @media (max-width: 767px) {
-    html.taj-snap-page {
-      overscroll-behavior-y: none;
-    }
-    .taj-snap__panel {
-      min-height: 100svh;
-      height: 100svh;
-    }
     .taj-snap__media--desktop { display: none;  }
     .taj-snap__media--mobile  { display: block; }
 
@@ -319,8 +312,8 @@
     .taj-snap__col-card {
       scroll-snap-align: center;
       scroll-snap-stop: always;
-      min-height: 100svh;
-      height: 100svh;
+      height: 100vh;
+      height: 100dvh;
       flex: none;
     }
     .taj-snap__col-image img {
@@ -685,9 +678,7 @@
     var absTop = rect.top + (window.pageYOffset || htmlEl.scrollTop) - (vh * 0.5) + (targetHeight * 0.5);
     absTop = Math.max(0, Math.round(absTop));
 
-    /* On mobile: instant scroll so section covers view immediately (no lag) */
-    var instant = isMobile();
-    window.scrollTo({ top: absTop, behavior: instant ? 'auto' : 'smooth' });
+    window.scrollTo({ top: absTop, behavior: 'smooth' });
 
     clearTimeout(cooldownId);
 

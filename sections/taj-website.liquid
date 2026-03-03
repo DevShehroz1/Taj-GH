@@ -352,15 +352,44 @@
 <div class="taj-snap" data-section-id="{{ section.id }}">
 
   {%- comment -%} Panel 1: Video Banner {%- endcomment -%}
+  {% assign has_video_desktop = false %}
   {% if section.settings.video_1 != blank or section.settings.video_1_url != blank %}
+    {% assign has_video_desktop = true %}
+  {% endif %}
+  {% assign has_video_mobile = false %}
+  {% if section.settings.video_1_mobile != blank or section.settings.video_1_url_mobile != blank %}
+    {% assign has_video_mobile = true %}
+  {% endif %}
+  {% if has_video_desktop or has_video_mobile %}
     <div class="taj-snap__panel" data-snap-panel>
-      <div class="taj-snap__media">
+      {%- comment -%} Desktop video {%- endcomment -%}
+      <div class="taj-snap__media taj-snap__media--desktop">
         {% if section.settings.video_1 != blank %}
           {{ section.settings.video_1 | video_tag: autoplay: true, muted: true, loop: true, playsinline: true, controls: false }}
         {% elsif section.settings.video_1_url != blank %}
           <video autoplay muted loop playsinline>
             <source src="{{ section.settings.video_1_url }}" type="video/mp4">
           </video>
+        {% endif %}
+      </div>
+      {%- comment -%} Mobile video (or fallback to desktop) {%- endcomment -%}
+      <div class="taj-snap__media taj-snap__media--mobile">
+        {% if has_video_mobile %}
+          {% if section.settings.video_1_mobile != blank %}
+            {{ section.settings.video_1_mobile | video_tag: autoplay: true, muted: true, loop: true, playsinline: true, controls: false }}
+          {% elsif section.settings.video_1_url_mobile != blank %}
+            <video autoplay muted loop playsinline>
+              <source src="{{ section.settings.video_1_url_mobile }}" type="video/mp4">
+            </video>
+          {% endif %}
+        {% else %}
+          {% if section.settings.video_1 != blank %}
+            {{ section.settings.video_1 | video_tag: autoplay: true, muted: true, loop: true, playsinline: true, controls: false }}
+          {% elsif section.settings.video_1_url != blank %}
+            <video autoplay muted loop playsinline>
+              <source src="{{ section.settings.video_1_url }}" type="video/mp4">
+            </video>
+          {% endif %}
         {% endif %}
       </div>
       <div class="taj-snap__overlay">
@@ -826,6 +855,18 @@
       "id": "video_1_url",
       "label": "Video URL (external MP4)",
       "info": "Use this if not uploading a video above"
+    },
+    {
+      "type": "video",
+      "id": "video_1_mobile",
+      "label": "Video (mobile)",
+      "info": "Optional — uses desktop video if empty"
+    },
+    {
+      "type": "text",
+      "id": "video_1_url_mobile",
+      "label": "Video URL (mobile, external MP4)",
+      "info": "Use this if not uploading a mobile video above"
     },
     {
       "type": "text",

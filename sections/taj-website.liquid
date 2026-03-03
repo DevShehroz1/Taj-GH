@@ -9,6 +9,7 @@
 
   html.taj-snap-page {
     scroll-snap-type: y mandatory;
+    scroll-padding: 0;
     scrollbar-width: none;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -55,11 +56,21 @@
     display: none !important;
   }
 
-  /* ═══ SNAP PANELS ═══ */
+  /* ═══ SECTION SPACING — remove gaps that cause peeking ═══ */
+  html.taj-snap-page #MainContent > div:has(.taj-snap),
+  html.taj-snap-page .taj-snap {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* ═══ SNAP PANELS ═══
+     scroll-snap-align: center prevents next section peeking into view */
 
   .taj-snap__panel {
-    scroll-snap-align: start;
+    scroll-snap-align: center;
     scroll-snap-stop: always;
+    min-height: 100vh;
+    min-height: 100dvh;
     height: 100vh;
     height: 100dvh;
     width: 100%;
@@ -185,7 +196,7 @@
   /* ═══ EXTRA SECTIONS AS SNAP TARGETS ═══ */
 
   .taj-extra-snap {
-    scroll-snap-align: start;
+    scroll-snap-align: center;
     scroll-snap-stop: always;
     min-height: 100vh;
     min-height: 100dvh;
@@ -210,7 +221,7 @@
   /* ═══ FOOTER AS LAST SNAP TARGET ═══ */
 
   html.taj-snap-page #t4s-footer {
-    scroll-snap-align: start;
+    scroll-snap-align: center;
     scroll-snap-stop: always;
     min-height: 100vh;
     min-height: 100dvh;
@@ -299,7 +310,7 @@
       padding: 0;
     }
     .taj-snap__col-card {
-      scroll-snap-align: start;
+      scroll-snap-align: center;
       scroll-snap-stop: always;
       height: 100vh;
       height: 100dvh;
@@ -504,7 +515,7 @@
 
   var MOBILE_BP = 767;
   var WHEEL_THRESHOLD = 50;
-  var COOLDOWN_MS = 1000;
+  var COOLDOWN_MS = 800;
 
   var htmlEl = document.documentElement;
   var dotsNav = document.querySelector('.taj-snap-dots');
@@ -661,7 +672,12 @@
     htmlEl.style.scrollSnapType = 'none';
 
     var rect = targets[index].getBoundingClientRect();
-    var absTop = rect.top + (window.pageYOffset || htmlEl.scrollTop);
+    var vh = window.innerHeight;
+    var targetHeight = rect.height;
+    /* Center the target in viewport (matches scroll-snap-align: center) */
+    var absTop = rect.top + (window.pageYOffset || htmlEl.scrollTop) - (vh * 0.5) + (targetHeight * 0.5);
+    absTop = Math.max(0, Math.round(absTop));
+
     window.scrollTo({ top: absTop, behavior: 'smooth' });
 
     clearTimeout(cooldownId);
@@ -678,9 +694,9 @@
         finish();
       };
       window.addEventListener('scrollend', done);
-      cooldownId = setTimeout(finish, 1400);
+      cooldownId = setTimeout(finish, 1200);
     } else {
-      cooldownId = setTimeout(finish, COOLDOWN_MS);
+      cooldownId = setTimeout(finish, 800);
     }
   }
 
@@ -710,7 +726,7 @@
 
       if (touchCooldown && !isAnimating) {
         var detected = detectIndex();
-        if (Math.abs(detected - lastStableIndex) > 1) {
+        if (Math.abs(detected - lastStableIndex) > 2) {
           var corrected = lastStableIndex + (detected > lastStableIndex ? 1 : -1);
           touchCooldown = false;
           clearTimeout(touchCooldownId);
@@ -745,13 +761,13 @@
     if (isInsideHeader(e.target)) return;
 
     var deltaY = touchStartY - e.changedTouches[0].clientY;
-    if (Math.abs(deltaY) > 30) {
+    if (Math.abs(deltaY) > 40) {
       lastStableIndex = detectIndex();
       touchCooldown = true;
       clearTimeout(touchCooldownId);
       touchCooldownId = setTimeout(function() {
         touchCooldown = false;
-      }, 900);
+      }, 600);
     }
   }
 

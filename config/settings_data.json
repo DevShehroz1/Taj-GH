@@ -1443,14 +1443,6 @@
             "type": "price",
             "settings": {}
           },
-          "mini_cart-1": {
-            "type": "tax",
-            "settings": {}
-          },
-          "mini_cart-2": {
-            "type": "agree",
-            "settings": {}
-          },
           "mini_cart-3": {
             "type": "btnc",
             "settings": {
@@ -1469,13 +1461,6 @@
               "button_effect": "default"
             }
           },
-          "mini_cart-5": {
-            "type": "img",
-            "settings": {
-              "svg": "amazon_payments,american_express,apple_pay,bitcoin,dankort,diners_club,discover,dogecoin,dwolla,forbrugsforeningen,interac,google_pay,jcb,klarna,klarna-pay-later,litecoin,maestro,master,paypal,shopify_pay,sofort,visa",
-              "height": 30
-            }
-          },
           "mini_cart-6": {
             "type": "btn",
             "settings": {
@@ -1490,22 +1475,19 @@
         },
         "block_order": [
           "mini_cart-0",
-          "mini_cart-1",
-          "mini_cart-2",
           "mini_cart-3",
           "mini_cart-4",
-          "mini_cart-5",
           "mini_cart-6"
         ],
         "settings": {
           "style": "1",
           "pos": "2",
-          "enable_pr": true,
-          "enable_calc_ship": true,
+          "enable_pr": false,
+          "enable_calc_ship": false,
           "enable_note": true,
-          "enable_rates": true,
+          "enable_rates": false,
           "enable_discount": true,
-          "enable_gift_wrap": true,
+          "enable_gift_wrap": false,
           "ship_df_country": "United States"
         }
       },

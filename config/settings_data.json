@@ -525,7 +525,7 @@
             "type": "base",
             "settings": {
               "title": "HOME",
-              "url": "https://tajfabrics.com/",
+              "url": "https://thetajfabrics.com/",
               "open_link": "_self",
               "icon": "",
               "cus_cl": false,
@@ -1247,7 +1247,7 @@
             "type": "menu",
             "settings": {
               "title": "Home",
-              "url": "https://tajfabrics.com/",
+              "url": "https://thetajfabrics.com/",
               "open_link": "_self",
               "menu": "",
               "lb": "",

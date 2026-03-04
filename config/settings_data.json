@@ -525,7 +525,7 @@
             "type": "base",
             "settings": {
               "title": "HOME",
-              "url": "/https://taj-fabrics-1.myshopify.com/",
+              "url": "https://tajfabrics.com/",
               "open_link": "_self",
               "icon": "",
               "cus_cl": false,
@@ -538,7 +538,7 @@
             "type": "base",
             "settings": {
               "title": "THE ESTATE EDIT",
-              "url": "/https://taj-fabrics-1.myshopify.com/",
+              "url": "shopify://collections/signature",
               "open_link": "_self",
               "icon": "",
               "cus_cl": false,
@@ -551,7 +551,7 @@
             "type": "base",
             "settings": {
               "title": "OUR STORY",
-              "url": "/",
+              "url": "shopify://pages/our-story",
               "open_link": "_self",
               "icon": "",
               "cus_cl": false,
@@ -564,7 +564,7 @@
             "type": "base",
             "settings": {
               "title": "CONTACT",
-              "url": "/https://taj-fabrics-1.myshopify.com/",
+              "url": "shopify://pages/contact",
               "open_link": "_self",
               "icon": "",
               "cus_cl": false,

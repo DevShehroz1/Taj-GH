@@ -331,6 +331,7 @@
           "type": "text_block",
           "settings": {
             "enable_image": true,
+            "image": "shopify://shop_images/Untitled-1.png",
             "title": "Born in the Saddle",
             "text": "<p>Inspired by the equestrian heritage of Punjab, not just the textile mill. Our cuts and falls are tested for movement.</p>",
             "button_label": "",

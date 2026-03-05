@@ -348,6 +348,7 @@
           "type": "text_block",
           "settings": {
             "enable_image": true,
+            "image": "shopify://shop_images/23.png",
             "title": "The Modern Fit",
             "text": "<p>We understand that the modern man drives an SUV and uses an iPhone. Our fabric is durable enough for the field but refined enough for the board meeting.</p>",
             "button_label": "",

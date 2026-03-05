@@ -589,7 +589,7 @@
           "hover": "hover_sideup",
           "enable_active": false,
           "h_navmb": 60,
-          "bgnav": "#ffffff",
+          "bgnav": "#000000",
           "opnav": 0,
           "clnav": "#000000",
           "clnav_hover": "#56cfe1",

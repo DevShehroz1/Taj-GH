@@ -79,8 +79,6 @@
       --h-text-color-rgb  : {{ se_stts.clnavst | color_to_rgb | remove: 'rgba(' | remove: 'rgb(' | remove: ')' }};
       --h-text-color-hover: {{ se_stts.clnavst_hover }};
       --h-bg-color        : {{ se_stts.bgnavst | color_modify: 'alpha', opnavst }};
-      -webkit-backdrop-filter: blur(12px) saturate(180%);
-      backdrop-filter: blur(12px) saturate(180%);
       background-color: {{ se_stts.bgnavst | color_modify: 'alpha', opnavst }};
     }
     .is-header--stuck .header__sticky-logo {

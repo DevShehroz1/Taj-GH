@@ -355,9 +355,17 @@
     transform: translateY(0);
   }
 
-  /* ═══ MOBILE — max-width: 767px ═══ */
+  /* ═══ MOBILE — max-width: 767px
+      Use 100svh so one banner fills the screen (no peeking of next) ═══ */
 
   @media (max-width: 767px) {
+    html.taj-snap-page {
+      overscroll-behavior-y: none;
+    }
+    .taj-snap__panel {
+      min-height: 100svh;
+      height: 100svh;
+    }
     .taj-snap__media--desktop { display: none;  }
     .taj-snap__media--mobile  { display: block; }
 
@@ -376,8 +384,8 @@
     .taj-snap__col-card {
       scroll-snap-align: center;
       scroll-snap-stop: always;
-      height: 100vh;
-      height: 100dvh;
+      min-height: 100svh;
+      height: 100svh;
       flex: none;
     }
     .taj-snap__col-image img {

@@ -585,6 +585,23 @@
 (function() {
   'use strict';
 
+  /* Inject mobile header white CSS immediately - must run before theme scripts */
+  if (document.documentElement.classList.contains('taj-snap-page') && window.innerWidth <= 767) {
+    if (!document.getElementById('taj-mobile-header-white')) {
+      var css = '@media (max-width:767px){' +
+        'html.taj-snap-page .t4s-section-header .t4s-header__wrapper,html.taj-snap-page .t4s-header__wrapper,html.taj-snap-page body .t4s-header__wrapper{--h-text-color:#fff!important;--h-text-color-hover:rgba(255,255,255,0.8)!important;--h-text-color-rgb:255,255,255!important}' +
+        'html.taj-snap-page .t4s-section-header a,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon,html.taj-snap-page .t4s-section-header .t4s-site-nav__icons a,html.taj-snap-page .t4s-section-header .t4s-site-nav__cart a,html.taj-snap-page .t4s-section-header .t4s-col-group_btns a,html.taj-snap-page .t4s-section-header .t4s-col-group_btns .t4s-push-menu-btn{color:#fff!important}' +
+        'html.taj-snap-page .t4s-section-header svg,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn svg,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon svg,html.taj-snap-page .t4s-section-header .t4s-col-group_btns svg{color:#fff!important;fill:#fff!important;stroke:#fff!important}' +
+        'html.taj-snap-page #t4s-menu-drawer,html.taj-snap-page #t4s-menu-drawer .t4s-mb__menu a,html.taj-snap-page #t4s-menu-drawer .t4s-mb-tab__title,html.taj-snap-page #t4s-menu-drawer .t4s-drawer__header span{color:#fff!important}' +
+        'html.taj-snap-page #t4s-menu-drawer svg,html.taj-snap-page #t4s-menu-drawer+.t4s-drawer-menu__close,html.taj-snap-page #t4s-menu-drawer+.t4s-drawer-menu__close svg{color:#fff!important;stroke:#fff!important;fill:#fff!important}' +
+      '}';
+      var s = document.createElement('style');
+      s.id = 'taj-mobile-header-white';
+      s.textContent = css;
+      (document.head || document.documentElement).appendChild(s);
+    }
+  }
+
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   var MOBILE_BP = 767;
@@ -734,19 +751,34 @@
 
   function forceMobileHeaderWhite() {
     if (!htmlEl.classList.contains('taj-snap-page') || !isMobile()) return;
+
+    /* Inject CSS once if not already (backup) */
+    if (!document.getElementById('taj-mobile-header-white')) {
+      var css = '@media (max-width:767px){html.taj-snap-page .t4s-header__wrapper{--h-text-color:#fff!important;--h-text-color-rgb:255,255,255!important}html.taj-snap-page .t4s-section-header a,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon,html.taj-snap-page .t4s-section-header .t4s-site-nav__icons a,html.taj-snap-page .t4s-section-header .t4s-site-nav__cart a{color:#fff!important}html.taj-snap-page .t4s-section-header svg{color:#fff!important;fill:#fff!important;stroke:#fff!important}html.taj-snap-page #t4s-menu-drawer,html.taj-snap-page #t4s-menu-drawer .t4s-mb__menu a,html.taj-snap-page #t4s-menu-drawer .t4s-mb-tab__title{color:#fff!important}html.taj-snap-page #t4s-menu-drawer svg,html.taj-snap-page #t4s-menu-drawer+.t4s-drawer-menu__close svg{stroke:#fff!important}}';
+      var s = document.createElement('style');
+      s.id = 'taj-mobile-header-white';
+      s.textContent = css;
+      (document.head || document.documentElement).appendChild(s);
+    }
+
+    /* Inline styles as backup */
     var wrapper = document.querySelector('.t4s-header__wrapper');
     if (wrapper) {
       wrapper.style.setProperty('--h-text-color', '#fff', 'important');
       wrapper.style.setProperty('--h-text-color-hover', 'rgba(255,255,255,0.8)', 'important');
       wrapper.style.setProperty('--h-text-color-rgb', '255, 255, 255', 'important');
     }
-    [].forEach.call(document.querySelectorAll('.t4s-push-menu-btn, .t4s-site-nav__cart > a, .t4s-site-nav__icon a'), function(el) {
-      el.style.setProperty('color', '#fff', 'important');
-    });
-    [].forEach.call(document.querySelectorAll('.t4s-push-menu-btn svg, .t4s-site-nav__icon svg'), function(el) {
-      el.style.setProperty('color', '#fff', 'important');
-      el.style.setProperty('fill', '#fff', 'important');
-    });
+    var header = document.querySelector('.t4s-section-header');
+    if (header) {
+      [].forEach.call(header.querySelectorAll('a, .t4s-push-menu-btn, .t4s-site-nav__icon'), function(el) {
+        el.style.setProperty('color', '#fff', 'important');
+      });
+      [].forEach.call(header.querySelectorAll('svg'), function(el) {
+        el.style.setProperty('color', '#fff', 'important');
+        el.style.setProperty('fill', '#fff', 'important');
+        el.style.setProperty('stroke', '#fff', 'important');
+      });
+    }
   }
 
   function unlock() {
@@ -929,8 +961,12 @@
 
     /* Re-apply mobile header white to override theme scripts that run after load */
     if (isMobile()) {
-      [100, 300, 600, 1000].forEach(function(ms) {
+      [50, 150, 300, 500, 800, 1200, 2000].forEach(function(ms) {
         setTimeout(forceMobileHeaderWhite, ms);
+      });
+      window.addEventListener('load', function() {
+        forceMobileHeaderWhite();
+        setTimeout(forceMobileHeaderWhite, 100);
       });
       /* Re-apply when theme adds is-header--stuck (can be on html or body) */
       var checkStuck = function() {

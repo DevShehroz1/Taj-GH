@@ -729,6 +729,24 @@
         logo.srcset = logo.dataset.originalSrcset;
       }
     }
+    if (isMobile()) forceMobileHeaderWhite();
+  }
+
+  function forceMobileHeaderWhite() {
+    if (!htmlEl.classList.contains('taj-snap-page') || !isMobile()) return;
+    var wrapper = document.querySelector('.t4s-header__wrapper');
+    if (wrapper) {
+      wrapper.style.setProperty('--h-text-color', '#fff', 'important');
+      wrapper.style.setProperty('--h-text-color-hover', 'rgba(255,255,255,0.8)', 'important');
+      wrapper.style.setProperty('--h-text-color-rgb', '255, 255, 255', 'important');
+    }
+    [].forEach.call(document.querySelectorAll('.t4s-push-menu-btn, .t4s-site-nav__cart > a, .t4s-site-nav__icon a'), function(el) {
+      el.style.setProperty('color', '#fff', 'important');
+    });
+    [].forEach.call(document.querySelectorAll('.t4s-push-menu-btn svg, .t4s-site-nav__icon svg'), function(el) {
+      el.style.setProperty('color', '#fff', 'important');
+      el.style.setProperty('fill', '#fff', 'important');
+    });
   }
 
   function unlock() {
@@ -894,6 +912,7 @@
       setActiveDot(currentIndex);
       updateHeaderColor(currentIndex);
       setInView();
+      if (isMobile()) forceMobileHeaderWhite();
     }, 250);
   }
 
@@ -902,9 +921,26 @@
     buildDots();
     setInView();
     updateHeaderColor(0);
+    if (isMobile()) forceMobileHeaderWhite();
 
     if (targets.length > 0) {
       targets[0].classList.add('is-in-view');
+    }
+
+    /* Re-apply mobile header white to override theme scripts that run after load */
+    if (isMobile()) {
+      [100, 300, 600, 1000].forEach(function(ms) {
+        setTimeout(forceMobileHeaderWhite, ms);
+      });
+      /* Re-apply when theme adds is-header--stuck (can be on html or body) */
+      var checkStuck = function() {
+        if (isMobile() && (document.documentElement.classList.contains('is-header--stuck') || document.body.classList.contains('is-header--stuck'))) {
+          forceMobileHeaderWhite();
+        }
+      };
+      var mo = new MutationObserver(checkStuck);
+      mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     }
 
     window.addEventListener('wheel', onWheel, { passive: false });

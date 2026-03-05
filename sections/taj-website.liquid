@@ -1,4 +1,14 @@
-<script>document.documentElement.classList.add('taj-snap-page');</script>
+<script>
+  document.documentElement.classList.add('taj-snap-page');
+  (function setViewportHeight() {
+    var vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', vh + 'px');
+    if (window.innerWidth <= 767) {
+      window.addEventListener('resize', setViewportHeight);
+      if (window.visualViewport) window.visualViewport.addEventListener('resize', setViewportHeight);
+    }
+  })();
+</script>
 
 <style>
   /* ═══════════════════════════════════════════
@@ -137,6 +147,7 @@
     min-height: 100dvh;
     height: 100vh;
     height: 100dvh;
+    box-sizing: border-box;
     width: 100%;
     position: relative;
     overflow: hidden;
@@ -356,15 +367,17 @@
   }
 
   /* ═══ MOBILE — max-width: 767px
-      Use 100svh so one banner fills the screen (no peeking of next) ═══ */
+      Use large viewport units so banner fills full screen on iOS Safari ═══ */
 
   @media (max-width: 767px) {
     html.taj-snap-page {
       overscroll-behavior-y: none;
     }
     .taj-snap__panel {
-      min-height: 100svh;
-      height: 100svh;
+      min-height: 100vh;
+      min-height: calc(var(--vh, 1vh) * 100);
+      height: 100vh;
+      height: calc(var(--vh, 1vh) * 100);
     }
     .taj-snap__media--desktop { display: none;  }
     .taj-snap__media--mobile  { display: block; }
@@ -384,8 +397,10 @@
     .taj-snap__col-card {
       scroll-snap-align: center;
       scroll-snap-stop: always;
-      min-height: 100svh;
-      height: 100svh;
+      min-height: 100vh;
+      min-height: calc(var(--vh, 1vh) * 100);
+      height: 100vh;
+      height: calc(var(--vh, 1vh) * 100);
       flex: none;
     }
     .taj-snap__col-image img {

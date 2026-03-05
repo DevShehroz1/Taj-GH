@@ -297,7 +297,9 @@
       "type": "taj-website",
       "name": "Snap Scroll Lookbook",
       "settings": {
+        "video_1": "shopify://files/videos/The Taj Man 2.0.mp4",
         "video_1_url": "",
+        "video_1_mobile": "shopify://files/videos/REEL 2 (1).mp4",
         "video_1_url_mobile": "",
         "video_1_title": "TAJ FABRICS PRESENTS",
         "video_1_cta_text": "Discover",

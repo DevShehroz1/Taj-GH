@@ -538,7 +538,7 @@
             "type": "base",
             "settings": {
               "title": "THE ESTATE EDIT",
-              "url": "shopify://collections/signature",
+              "url": "shopify://collections/all",
               "open_link": "_self",
               "icon": "",
               "cus_cl": false,

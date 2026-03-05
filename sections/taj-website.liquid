@@ -35,7 +35,13 @@
     z-index: 500 !important;
     margin: 0 !important;
     box-sizing: border-box;
+    box-shadow: none !important;
+    border: none !important;
     transition: --h-text-color 0.3s ease, --h-bg-color 0.3s ease;
+  }
+
+  html.taj-snap-page .t4s-header__wrapper {
+    background-color: transparent !important;
   }
 
   @media (min-width: 768px) {
@@ -47,7 +53,7 @@
     html.taj-snap-page.taj-header-dark .t4s-header__wrapper {
       --h-text-color: #000 !important;
       --h-text-color-hover: rgba(0,0,0,0.6) !important;
-      --h-bg-color: rgba(255,255,255,0.95) !important;
+      --h-bg-color: transparent !important;
     }
   }
 

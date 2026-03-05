@@ -57,26 +57,38 @@
     }
   }
 
-  /* ═══ MOBILE: white header icons + white menu drawer (snap page only) ═══ */
+  /* ═══ MOBILE: white header icons + white menu drawer (snap page only)
+      Override .is-header--stuck so theme sticky header colors don’t switch to black ═══ */
   @media (max-width: 767px) {
-    html.taj-snap-page .t4s-header__wrapper {
+    html.taj-snap-page .t4s-header__wrapper,
+    html.taj-snap-page .is-header--stuck .t4s-header__wrapper {
       --h-text-color: #fff !important;
       --h-text-color-hover: rgba(255,255,255,0.8) !important;
+      --h-text-color-rgb: 255, 255, 255 !important;
     }
-    html.taj-snap-page .t4s-push-menu-btn,
-    html.taj-snap-page .t4s-site-nav__cart > a,
-    html.taj-snap-page .t4s-site-nav__icon a {
+    html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,
+    html.taj-snap-page .t4s-section-header .t4s-site-nav__cart > a,
+    html.taj-snap-page .t4s-section-header .t4s-site-nav__icon a,
+    html.taj-snap-page .is-header--stuck .t4s-push-menu-btn,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__cart > a,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a {
       color: #fff !important;
     }
-    html.taj-snap-page .t4s-push-menu-btn svg,
-    html.taj-snap-page .t4s-site-nav__icon svg,
-    html.taj-snap-page .t4s-site-nav__icon a svg {
+    html.taj-snap-page .t4s-section-header .t4s-push-menu-btn svg,
+    html.taj-snap-page .t4s-section-header .t4s-site-nav__icon svg,
+    html.taj-snap-page .t4s-section-header .t4s-site-nav__icon a svg,
+    html.taj-snap-page .is-header--stuck .t4s-push-menu-btn svg,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon svg,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a svg {
       color: #fff !important;
       fill: #fff !important;
     }
     html.taj-snap-page .t4s-push-menu-btn:hover,
     html.taj-snap-page .t4s-site-nav__cart > a:hover,
-    html.taj-snap-page .t4s-site-nav__icon a:hover {
+    html.taj-snap-page .t4s-site-nav__icon a:hover,
+    html.taj-snap-page .is-header--stuck .t4s-push-menu-btn:hover,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__cart > a:hover,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a:hover {
       color: rgba(255,255,255,0.8) !important;
     }
     html.taj-snap-page #t4s-menu-drawer,

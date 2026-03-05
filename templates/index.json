@@ -365,6 +365,7 @@
           "type": "text_block",
           "settings": {
             "enable_image": true,
+            "image": "shopify://shop_images/41444.png",
             "title": "Accessible Prestige",
             "text": "<p>We believe high status shouldn’t require a mortgage. We offer the \"Pasha\" standard of thread count at a price point for the smart investor.</p>",
             "button_label": "",

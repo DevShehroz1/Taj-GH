@@ -33,6 +33,7 @@
     scrollbar-width: none;
     overflow-y: scroll;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
   }
   html.taj-snap-page::-webkit-scrollbar { display: none; }
 
@@ -119,6 +120,14 @@
     display: none !important;
   }
 
+  /* Collapse header wrapper so it doesn't add space to the document flow */
+  html.taj-snap-page #shopify-section-header,
+  html.taj-snap-page [id^="shopify-section-"][class*="header"] {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
   /* ═══ SECTION SPACING — no gaps, no peeking ═══ */
   html.taj-snap-page #MainContent > div:has(.taj-snap),
   html.taj-snap-page .taj-snap {
@@ -131,11 +140,10 @@
     margin: 0 !important;
   }
 
-  /* ═══ SNAP PANELS ═══
-     scroll-snap-align: center prevents next section peeking into view */
+  /* ═══ SNAP PANELS ═══ */
 
   .taj-snap__panel {
-    scroll-snap-align: center;
+    scroll-snap-align: start;
     scroll-snap-stop: always;
     min-height: 100vh;
     min-height: 100dvh;
@@ -265,7 +273,7 @@
   /* ═══ EXTRA SECTIONS AS SNAP TARGETS ═══ */
 
   .taj-extra-snap {
-    scroll-snap-align: center;
+    scroll-snap-align: start;
     scroll-snap-stop: always;
     min-height: 100vh;
     min-height: 100dvh;
@@ -290,7 +298,7 @@
   /* ═══ FOOTER AS LAST SNAP TARGET ═══ */
 
   html.taj-snap-page #t4s-footer {
-    scroll-snap-align: center;
+    scroll-snap-align: start;
     scroll-snap-stop: always;
     min-height: 100vh;
     min-height: 100dvh;
@@ -833,15 +841,7 @@
 
     var rect = targets[index].getBoundingClientRect();
     var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    var absTop;
-    if (isMobile()) {
-      absTop = rect.top + scrollTop;
-    } else {
-      var vh = window.innerHeight;
-      var targetHeight = rect.height;
-      absTop = rect.top + scrollTop - (vh * 0.5) + (targetHeight * 0.5);
-    }
-    absTop = Math.max(0, Math.round(absTop));
+    var absTop = Math.max(0, Math.round(rect.top + scrollTop));
 
     /* Mobile: instant scroll avoids conflict with native touch scroll-snap */
     var behavior = isMobile() ? 'auto' : 'smooth';

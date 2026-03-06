@@ -607,7 +607,7 @@
           "opnavst": 0,
           "clnavst": "#222222",
           "clnavst_hover": "#000000",
-          "transparent_header": true,
+          "transparent_header": false,
           "space_transparent_header": false,
           "bgnavtr": "rgba(0,0,0,0)",
           "opnavtr": 0,

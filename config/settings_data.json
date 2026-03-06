@@ -538,7 +538,7 @@
             "type": "base",
             "settings": {
               "title": "THE ESTATE EDIT",
-              "url": "shopify://collections/signature",
+              "url": "shopify://collections/all",
               "open_link": "_self",
               "icon": "",
               "cus_cl": false,
@@ -589,9 +589,9 @@
           "hover": "hover_sideup",
           "enable_active": false,
           "h_navmb": 60,
-          "bgnav": "#ffffff",
+          "bgnav": "#000000",
           "opnav": 0,
-          "clnav": "#ffffff",
+          "clnav": "#000000",
           "clnav_hover": "#56cfe1",
           "h_icon": "kalles",
           "hover_icon": "2",
@@ -606,12 +606,12 @@
           "bgnavst": "rgba(0,0,0,0)",
           "opnavst": 0,
           "clnavst": "#222222",
-          "clnavst_hover": "#ffffff",
+          "clnavst_hover": "#000000",
           "transparent_header": true,
           "space_transparent_header": false,
           "bgnavtr": "rgba(0,0,0,0)",
           "opnavtr": 0,
-          "clnavtr": "#ffffff",
+          "clnavtr": "#222222",
           "clnavtr_hover": "#56cfe1",
           "fm_nav": "1",
           "fs_nav": 14,
@@ -1320,6 +1320,9 @@
           "mb_nav-7",
           "mb_nav-8",
           "mb_nav-9"
+        ],
+        "custom_css": [
+          "h2 {color: black;}"
         ],
         "settings": {}
       },

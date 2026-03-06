@@ -47,9 +47,9 @@
     }
 }
 
-/* 1.5 view carousel on mobile — Grid desktop, horizontal carousel mobile */
+/* 1.1 view carousel on mobile — Grid desktop, horizontal carousel mobile */
 @media (max-width: 767px) {
-    .t4s-feature-columns--mb-carousel-15 {
+    .t4s-feature-columns .t4s-feature-columns--mb-carousel-15 {
         display: flex !important;
         flex-wrap: nowrap !important;
         overflow-x: auto;
@@ -57,18 +57,36 @@
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        gap: 10px;
+        gap: 8px;
         margin: 0 -15px;
         padding: 0 15px;
     }
     .t4s-feature-columns--mb-carousel-15::-webkit-scrollbar {
         display: none;
     }
+    /* 1.1 view: one full card + tiny sliver of next (~91% per card) */
     .t4s-feature-columns--mb-carousel-15 > .t4s-col-item {
-        flex: 0 0 calc(66.666% - 7px) !important;
-        max-width: calc(66.666% - 7px) !important;
+        flex: 0 0 calc(90.9% - 4px) !important;
+        max-width: calc(90.9% - 4px) !important;
         scroll-snap-align: start;
         scroll-snap-stop: always;
+    }
+    /* Remove excess vertical space when using 1.1 carousel layout */
+    .t4s-feature-columns:has(.t4s-feature-columns--mb-carousel-15) .t4s-top-heading { margin-bottom: 14px !important; }
+    .t4s-feature-columns--mb-carousel-15 .t4s-col-item .t4s-feature-columns__title {
+        margin-top: 12px !important;
+        margin-bottom: 8px !important;
+    }
+    .t4s-feature-columns--mb-carousel-15 .t4s-col-item .t4s-feature-columns__content {
+        padding-bottom: 8px !important;
+    }
+    /* Larger images/cards on mobile */
+    .t4s-feature-columns--mb-carousel-15 .t4s_ratio {
+        min-height: 220px !important;
+    }
+    /* Tighter section margins when using carousel layout */
+    .t4s-feature-columns:has(.t4s-feature-columns--mb-carousel-15) .t4s-section-inner {
+        margin-bottom: 20px !important;
     }
 }
 

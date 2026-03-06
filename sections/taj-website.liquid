@@ -2,12 +2,21 @@
   document.documentElement.classList.add('taj-snap-page');
   (function() {
     var setVh = function() {
-      document.documentElement.style.setProperty('--taj-vh', window.innerHeight + 'px');
+      var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+      document.documentElement.style.setProperty('--taj-vh', Math.round(h) + 'px');
     };
     setVh();
     window.addEventListener('resize', setVh);
-    window.addEventListener('orientationchange', function() { setTimeout(setVh, 150); });
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', function() { setTimeout(setVh, 200); });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', setVh);
+      window.visualViewport.addEventListener('scroll', setVh);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      setVh();
+      setTimeout(setVh, 100);
+      setTimeout(setVh, 350);
+    });
   })();
 </script>
 
@@ -102,28 +111,7 @@
     html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a:hover {
       color: rgba(255,255,255,0.8) !important;
     }
-    html.taj-snap-page #t4s-menu-drawer,
-    html.taj-snap-page #t4s-menu-drawer .t4s-drawer__header,
-    html.taj-snap-page #t4s-menu-drawer .t4s-drawer__content,
-    html.taj-snap-page #t4s-menu-drawer .t4s-mb__menu a,
-    html.taj-snap-page #t4s-menu-drawer .t4s-mb-tab__title,
-    html.taj-snap-page #t4s-menu-drawer .t4s-drawer__header span {
-      color: #fff !important;
-    }
-    html.taj-snap-page #t4s-menu-drawer .t4s-drawer__close {
-      color: #fff !important;
-    }
-    html.taj-snap-page #t4s-menu-drawer .t4s-drawer__close svg {
-      color: #fff !important;
-      stroke: #fff !important;
-    }
-    html.taj-snap-page #t4s-menu-drawer + .t4s-drawer-menu__close {
-      color: #fff !important;
-    }
-    html.taj-snap-page #t4s-menu-drawer + .t4s-drawer-menu__close svg {
-      color: #fff !important;
-      stroke: #fff !important;
-    }
+    /* Menu drawer keeps theme default (dark text) - white background needs readable text */
   }
 
   html.taj-snap-page #shopify-section-announcement-bar,
@@ -373,7 +361,7 @@
   }
 
   /* ═══ MOBILE — max-width: 767px
-      One full banner only. --taj-vh = actual innerHeight for iOS Safari. ═══ */
+      One full banner only. --taj-vh from visualViewport for iOS Safari/Chrome. ═══ */
 
   @media (max-width: 767px) {
     html.taj-snap-page {
@@ -383,10 +371,10 @@
     .taj-snap__panel {
       scroll-snap-align: start;
       scroll-snap-stop: always;
-      min-height: 100vh;
-      height: 100vh;
       height: var(--taj-vh, 100vh);
       min-height: var(--taj-vh, 100vh);
+      overflow: hidden;
+      box-sizing: border-box;
     }
     .taj-snap__media--desktop { display: none;  }
     .taj-snap__media--mobile  { display: block; }
@@ -406,11 +394,11 @@
     .taj-snap__col-card {
       scroll-snap-align: start;
       scroll-snap-stop: always;
-      min-height: 100vh;
-      height: 100vh;
       height: var(--taj-vh, 100vh);
       min-height: var(--taj-vh, 100vh);
       flex: none;
+      overflow: hidden;
+      box-sizing: border-box;
     }
     .taj-snap__col-image img {
       object-fit: cover;
@@ -427,8 +415,10 @@
     .taj-extra-snap,
     html.taj-snap-page #t4s-footer {
       scroll-snap-align: start;
-      min-height: 100vh;
       height: var(--taj-vh, 100vh);
+      min-height: var(--taj-vh, 100vh);
+      overflow: hidden;
+      box-sizing: border-box;
     }
     .taj-snap-dots {
       right: 14px;
@@ -550,8 +540,12 @@
 
         {% if section.settings.collection_2 != blank %}
           {% assign col2 = section.settings.collection_2 %}
+          {% assign col2_url = col2.url %}
+          {% if section.settings.collection_2_link != blank %}
+            {% assign col2_url = section.settings.collection_2_link %}
+          {% endif %}
           <div class="taj-snap__col-card" data-snap-col>
-            <a href="{{ col2.url }}" class="taj-snap__col-image">
+            <a href="{{ col2_url }}" class="taj-snap__col-image">
               {% if section.settings.collection_2_image != blank %}
                 <img src="{{ section.settings.collection_2_image | image_url: width: 800 }}" alt="{{ col2.title | escape }}" loading="lazy">
               {% elsif col2.image %}
@@ -560,7 +554,7 @@
             </a>
             <div class="taj-snap__col-info">
               <p class="taj-snap__col-title">{{ section.settings.collection_2_heading | default: col2.title }}</p>
-              <a href="{{ col2.url }}" class="taj-snap__col-cta">{{ section.settings.collection_2_cta | default: 'Discover' }}</a>
+              <a href="{{ col2_url }}" class="taj-snap__col-cta">{{ section.settings.collection_2_cta | default: 'Discover' }}</a>
             </div>
           </div>
         {% endif %}
@@ -630,8 +624,6 @@
         'html.taj-snap-page .t4s-section-header .t4s-header__wrapper,html.taj-snap-page .t4s-header__wrapper,html.taj-snap-page body .t4s-header__wrapper{--h-text-color:#fff!important;--h-text-color-hover:rgba(255,255,255,0.8)!important;--h-text-color-rgb:255,255,255!important}' +
         'html.taj-snap-page .t4s-section-header a,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon,html.taj-snap-page .t4s-section-header .t4s-site-nav__icons a,html.taj-snap-page .t4s-section-header .t4s-site-nav__cart a,html.taj-snap-page .t4s-section-header .t4s-col-group_btns a,html.taj-snap-page .t4s-section-header .t4s-col-group_btns .t4s-push-menu-btn{color:#fff!important}' +
         'html.taj-snap-page .t4s-section-header svg,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn svg,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon svg,html.taj-snap-page .t4s-section-header .t4s-col-group_btns svg{color:#fff!important;fill:#fff!important;stroke:#fff!important}' +
-        'html.taj-snap-page #t4s-menu-drawer,html.taj-snap-page #t4s-menu-drawer .t4s-mb__menu a,html.taj-snap-page #t4s-menu-drawer .t4s-mb-tab__title,html.taj-snap-page #t4s-menu-drawer .t4s-drawer__header span{color:#fff!important}' +
-        'html.taj-snap-page #t4s-menu-drawer svg,html.taj-snap-page #t4s-menu-drawer+.t4s-drawer-menu__close,html.taj-snap-page #t4s-menu-drawer+.t4s-drawer-menu__close svg{color:#fff!important;stroke:#fff!important;fill:#fff!important}' +
       '}';
       var s = document.createElement('style');
       s.id = 'taj-mobile-header-white';
@@ -789,7 +781,7 @@
 
     /* Inject CSS once if not already (backup) */
     if (!document.getElementById('taj-mobile-header-white')) {
-      var css = '@media (max-width:767px){html.taj-snap-page .t4s-header__wrapper{--h-text-color:#fff!important;--h-text-color-rgb:255,255,255!important}html.taj-snap-page .t4s-section-header a,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon,html.taj-snap-page .t4s-section-header .t4s-site-nav__icons a,html.taj-snap-page .t4s-section-header .t4s-site-nav__cart a{color:#fff!important}html.taj-snap-page .t4s-section-header svg{color:#fff!important;fill:#fff!important;stroke:#fff!important}html.taj-snap-page #t4s-menu-drawer,html.taj-snap-page #t4s-menu-drawer .t4s-mb__menu a,html.taj-snap-page #t4s-menu-drawer .t4s-mb-tab__title{color:#fff!important}html.taj-snap-page #t4s-menu-drawer svg,html.taj-snap-page #t4s-menu-drawer+.t4s-drawer-menu__close svg{stroke:#fff!important}}';
+      var css = '@media (max-width:767px){html.taj-snap-page .t4s-header__wrapper{--h-text-color:#fff!important;--h-text-color-rgb:255,255,255!important}html.taj-snap-page .t4s-section-header a,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon,html.taj-snap-page .t4s-section-header .t4s-site-nav__icons a,html.taj-snap-page .t4s-section-header .t4s-site-nav__cart a{color:#fff!important}html.taj-snap-page .t4s-section-header svg{color:#fff!important;fill:#fff!important;stroke:#fff!important}}';
       var s = document.createElement('style');
       s.id = 'taj-mobile-header-white';
       s.textContent = css;
@@ -1103,6 +1095,12 @@
       "id": "collection_2_cta",
       "label": "Collection 2 CTA text",
       "default": "Discover"
+    },
+    {
+      "type": "url",
+      "id": "collection_2_link",
+      "label": "Collection 2 custom link",
+      "info": "Override collection URL (e.g. for Coming Soon page)"
     },
      {
       "type": "header",

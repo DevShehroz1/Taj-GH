@@ -378,6 +378,10 @@
 
   @media (max-width: 767px) {
     html.taj-snap-page {
+      /* Use proximity instead of mandatory so that banner panels
+         still snap crisply, but content after the last panel
+         (extra sections, footer) scrolls freely without snapping back */
+      scroll-snap-type: y proximity;
       overscroll-behavior-y: none;
     }
     /* Remove any theme-injected spacing that offsets snap panels */

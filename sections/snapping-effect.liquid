@@ -1,8 +1,6 @@
 <script>
   document.documentElement.classList.add('taj-snap-page');
   (function() {
-    /* Set --taj-vh to LARGE viewport (full screen) so panels extend under
-       transparent browser bar — prevents next section peeking through. */
     var setVh = function() {
       var h = Math.max(
         window.innerHeight || 0,
@@ -29,7 +27,6 @@
   /* ═══════════════════════════════════════════
      FULL-PAGE SNAP SCROLL — applied to html
      Only active when taj-snap-page class is set
-     (set immediately via inline script above)
      ═══════════════════════════════════════════ */
 
   html.taj-snap-page {
@@ -48,9 +45,7 @@
   }
   html.taj-snap-page body::-webkit-scrollbar { display: none; }
 
-  /* ═══ FIXED HEADER OVERLAY ═══
-     Force header to fixed position so it floats
-     above all snap panels on the homepage */
+  /* ═══ FIXED HEADER OVERLAY ═══ */
 
   html.taj-snap-page .t4s-section-header {
     position: fixed !important;
@@ -83,8 +78,7 @@
     }
   }
 
-  /* ═══ MOBILE: white header icons + white menu drawer (snap page only)
-      Override .is-header--stuck so theme sticky header colors don’t switch to black ═══ */
+  /* ═══ MOBILE: white header icons ═══ */
   @media (max-width: 767px) {
     html.taj-snap-page .t4s-header__wrapper,
     html.taj-snap-page .is-header--stuck .t4s-header__wrapper {
@@ -117,7 +111,6 @@
     html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a:hover {
       color: rgba(255,255,255,0.8) !important;
     }
-    /* Menu drawer keeps theme default (dark text) - white background needs readable text */
   }
 
   html.taj-snap-page #shopify-section-announcement-bar,
@@ -275,7 +268,7 @@
   .taj-snap__media--desktop { display: block; }
   .taj-snap__media--mobile  { display: none;  }
 
-  /* ═══ EXTRA SECTIONS AS SNAP TARGETS ═══ */
+  /* ═══ EXTRA SECTIONS — no snapping, scroll freely ═══ */
 
   .taj-extra-snap {
     scroll-snap-align: none;
@@ -344,7 +337,7 @@
     transform: scale(1.35);
   }
 
-  /* ═══ PANEL ENTRANCE ANIMATIONS — fast, minimal delay ═══ */
+  /* ═══ PANEL ENTRANCE ANIMATIONS ═══ */
 
   .taj-snap__overlay > * {
     opacity: 0;
@@ -371,12 +364,11 @@
     transform: translateY(0);
   }
 
-  /* ═══ MOBILE — max-width: 767px
-      Strict: one banner only, no peeking through transparent browser bar. ═══ */
+  /* ═══ MOBILE — max-width: 767px ═══ */
 
   @media (max-width: 767px) {
     html.taj-snap-page {
-      /* proximity = panels still snap (full-viewport = always within threshold)
+      /* proximity = panels snap crisply (full-viewport = always within threshold)
          but text columns + footer scroll freely since they have no snap-align */
       scroll-snap-type: y proximity;
       overscroll-behavior-y: none;
@@ -452,6 +444,7 @@
     .taj-snap__cta      { font-size: 11px; }
     .taj-snap__overlay  { padding-bottom: 46px; }
 
+    /* No snapping for text columns and footer on mobile */
     html.taj-snap-page .t4s-feature-columns,
     html.taj-snap-page #t4s-footer {
       scroll-snap-align: none !important;
@@ -493,182 +486,11 @@
 {%- comment -%} Dot navigation — populated by JS {%- endcomment -%}
 <nav class="taj-snap-dots" aria-label="Section navigation"></nav>
 
-<div class="taj-snap" data-section-id="{{ section.id }}">
-
-  {%- comment -%} Panel 1: Video Banner (or static fallback) {%- endcomment -%}
-  {% assign has_video_desktop = false %}
-  {% if section.settings.video_1 != blank or section.settings.video_1_url != blank %}
-    {% assign has_video_desktop = true %}
-  {% endif %}
-  {% assign has_video_mobile = false %}
-  {% if section.settings.video_1_mobile != blank or section.settings.video_1_url_mobile != blank %}
-    {% assign has_video_mobile = true %}
-  {% endif %}
-  {% assign has_banner_desktop = section.settings.video_1_image_desktop != blank %}
-  {% assign has_banner_mobile = section.settings.video_1_image_mobile != blank %}
-  {% if has_video_desktop or has_video_mobile or has_banner_desktop or has_banner_mobile %}
-    <div class="taj-snap__panel" data-snap-panel>
-      {%- comment -%} Desktop: video or static image {%- endcomment -%}
-      <div class="taj-snap__media taj-snap__media--desktop">
-        {% if has_video_desktop %}
-          {% if section.settings.video_1 != blank %}
-            {{ section.settings.video_1 | video_tag: autoplay: true, muted: true, loop: true, playsinline: true, controls: false }}
-          {% else %}
-            <video autoplay muted loop playsinline>
-              <source src="{{ section.settings.video_1_url }}" type="video/mp4">
-            </video>
-          {% endif %}
-        {% elsif has_banner_desktop %}
-          <img src="{{ section.settings.video_1_image_desktop | image_url: width: 1920 }}" alt="{{ section.settings.video_1_title | escape }}" loading="lazy">
-        {% endif %}
-      </div>
-      {%- comment -%} Mobile: video or static image {%- endcomment -%}
-      <div class="taj-snap__media taj-snap__media--mobile">
-        {% if has_video_mobile %}
-          {% if section.settings.video_1_mobile != blank %}
-            {{ section.settings.video_1_mobile | video_tag: autoplay: true, muted: true, loop: true, playsinline: true, controls: false }}
-          {% else %}
-            <video autoplay muted loop playsinline>
-              <source src="{{ section.settings.video_1_url_mobile }}" type="video/mp4">
-            </video>
-          {% endif %}
-        {% elsif has_video_desktop %}
-          {% if section.settings.video_1 != blank %}
-            {{ section.settings.video_1 | video_tag: autoplay: true, muted: true, loop: true, playsinline: true, controls: false }}
-          {% else %}
-            <video autoplay muted loop playsinline>
-              <source src="{{ section.settings.video_1_url }}" type="video/mp4">
-            </video>
-          {% endif %}
-        {% elsif has_banner_mobile %}
-          <img src="{{ section.settings.video_1_image_mobile | image_url: width: 800 }}" alt="{{ section.settings.video_1_title | escape }}" loading="lazy">
-        {% elsif has_banner_desktop %}
-          <img src="{{ section.settings.video_1_image_desktop | image_url: width: 800 }}" alt="{{ section.settings.video_1_title | escape }}" loading="lazy">
-        {% endif %}
-      </div>
-      <div class="taj-snap__overlay">
-        {% if section.settings.video_1_title != blank %}
-          <p class="taj-snap__title">{{ section.settings.video_1_title }}</p>
-        {% endif %}
-        {% if section.settings.video_1_cta_text != blank %}
-          <a href="{{ section.settings.video_1_cta_link }}" class="taj-snap__cta">{{ section.settings.video_1_cta_text }}</a>
-        {% endif %}
-      </div>
-    </div>
-  {% endif %}
-
-  {%- comment -%} Panel 2: Two Collections {%- endcomment -%}
-  {% assign show_col1 = section.settings.collection_1 != blank or (section.settings.collection_1_link != blank and section.settings.collection_1_image != blank) %}
-  {% assign show_col2 = section.settings.collection_2 != blank or (section.settings.collection_2_link != blank and section.settings.collection_2_image != blank) %}
-  {% if show_col1 or show_col2 %}
-    <div class="taj-snap__panel taj-snap__panel--collections" data-snap-panel data-snap-collections>
-      <div class="taj-snap__collections">
-
-        {% if show_col1 %}
-          {% assign col1 = section.settings.collection_1 %}
-          {% assign col1_url = section.settings.collection_1_link %}
-          {% if col1 != blank and section.settings.collection_1_link == blank %}
-            {% assign col1_url = col1.url %}
-          {% endif %}
-          {% if col1_url != blank %}
-          <div class="taj-snap__col-card" data-snap-col>
-            <a href="{{ col1_url }}" class="taj-snap__col-image">
-              {% if section.settings.collection_1_image != blank %}
-                <img src="{{ section.settings.collection_1_image | image_url: width: 800 }}" alt="{{ section.settings.collection_1_heading | default: col1.title | default: 'Collection 1' | escape }}" loading="lazy">
-              {% elsif col1 != blank and col1.image %}
-                <img src="{{ col1.image | image_url: width: 800 }}" alt="{{ section.settings.collection_1_heading | default: col1.title | escape }}" loading="lazy">
-              {% endif %}
-            </a>
-            <div class="taj-snap__col-info">
-              <p class="taj-snap__col-title">{% if section.settings.collection_1_heading != blank %}{{ section.settings.collection_1_heading }}{% elsif col1 != blank %}{{ col1.title }}{% else %}Collection{% endif %}</p>
-              <a href="{{ col1_url }}" class="taj-snap__col-cta">{{ section.settings.collection_1_cta | default: 'Explore' }}</a>
-            </div>
-          </div>
-          {% endif %}
-        {% endif %}
-
-        {% if show_col2 %}
-          {% assign col2 = section.settings.collection_2 %}
-          {% assign col2_url = section.settings.collection_2_link %}
-          {% if col2 != blank and section.settings.collection_2_link == blank %}
-            {% assign col2_url = col2.url %}
-          {% endif %}
-          {% if col2_url != blank %}
-          <div class="taj-snap__col-card" data-snap-col>
-            <a href="{{ col2_url }}" class="taj-snap__col-image">
-              {% if section.settings.collection_2_image != blank %}
-                <img src="{{ section.settings.collection_2_image | image_url: width: 800 }}" alt="{{ section.settings.collection_2_heading | default: 'Collection 2' | escape }}" loading="lazy">
-              {% elsif col2 != blank and col2.image %}
-                <img src="{{ col2.image | image_url: width: 800 }}" alt="{{ section.settings.collection_2_heading | default: col2.title | escape }}" loading="lazy">
-              {% endif %}
-            </a>
-            <div class="taj-snap__col-info">
-              <p class="taj-snap__col-title">{% if section.settings.collection_2_heading != blank %}{{ section.settings.collection_2_heading }}{% elsif col2 != blank %}{{ col2.title }}{% else %}Collection{% endif %}</p>
-              <a href="{{ col2_url }}" class="taj-snap__col-cta">{{ section.settings.collection_2_cta | default: 'Discover' }}</a>
-            </div>
-          </div>
-          {% endif %}
-        {% endif %}
-
-      </div>
-    </div>
-  {% endif %}
-
-  {%- comment -%} Panel 3: Image Banner 1 {%- endcomment -%}
-  {% if section.settings.banner_1_image != blank %}
-    <div class="taj-snap__panel" data-snap-panel>
-      <div class="taj-snap__media taj-snap__media--desktop">
-        <img src="{{ section.settings.banner_1_image | image_url: width: 1920 }}" alt="{{ section.settings.banner_1_title | escape }}" loading="lazy">
-      </div>
-      <div class="taj-snap__media taj-snap__media--mobile">
-        {% if section.settings.banner_1_image_mobile != blank %}
-          <img src="{{ section.settings.banner_1_image_mobile | image_url: width: 800 }}" alt="{{ section.settings.banner_1_title | escape }}" loading="lazy">
-        {% else %}
-          <img src="{{ section.settings.banner_1_image | image_url: width: 800 }}" alt="{{ section.settings.banner_1_title | escape }}" loading="lazy">
-        {% endif %}
-      </div>
-      <div class="taj-snap__overlay">
-        {% if section.settings.banner_1_title != blank %}
-          <p class="taj-snap__title">{{ section.settings.banner_1_title }}</p>
-        {% endif %}
-        {% if section.settings.banner_1_cta_text != blank %}
-          <a href="{{ section.settings.banner_1_cta_link }}" class="taj-snap__cta">{{ section.settings.banner_1_cta_text }}</a>
-        {% endif %}
-      </div>
-    </div>
-  {% endif %}
-
-  {%- comment -%} Panel 4: Image Banner 2 {%- endcomment -%}
-  {% if section.settings.banner_2_image != blank %}
-    <div class="taj-snap__panel" data-snap-panel>
-      <div class="taj-snap__media taj-snap__media--desktop">
-        <img src="{{ section.settings.banner_2_image | image_url: width: 1920 }}" alt="{{ section.settings.banner_2_title | escape }}" loading="lazy">
-      </div>
-      <div class="taj-snap__media taj-snap__media--mobile">
-        {% if section.settings.banner_2_image_mobile != blank %}
-          <img src="{{ section.settings.banner_2_image_mobile | image_url: width: 800 }}" alt="{{ section.settings.banner_2_title | escape }}" loading="lazy">
-        {% else %}
-          <img src="{{ section.settings.banner_2_image | image_url: width: 800 }}" alt="{{ section.settings.banner_2_title | escape }}" loading="lazy">
-        {% endif %}
-      </div>
-      <div class="taj-snap__overlay">
-        {% if section.settings.banner_2_title != blank %}
-          <p class="taj-snap__title">{{ section.settings.banner_2_title }}</p>
-        {% endif %}
-        {% if section.settings.banner_2_cta_text != blank %}
-          <a href="{{ section.settings.banner_2_cta_link }}" class="taj-snap__cta">{{ section.settings.banner_2_cta_text }}</a>
-        {% endif %}
-      </div>
-    </div>
-  {% endif %}
-
-</div>
-
 <script>
 (function() {
   'use strict';
 
-  /* Inject mobile header white CSS immediately - must run before theme scripts */
+  /* Inject mobile header white CSS immediately */
   if (document.documentElement.classList.contains('taj-snap-page') && window.innerWidth <= 767) {
     if (!document.getElementById('taj-mobile-header-white')) {
       var css = '@media (max-width:767px){' +
@@ -783,8 +605,6 @@
       if (visible) {
         targets[i].classList.add('is-in-view');
       } else if (!isMobile() || forceCleanup) {
-        /* On mobile, only remove is-in-view after scroll has settled
-           to prevent entrance animations from flickering mid-snap */
         targets[i].classList.remove('is-in-view');
       }
     }
@@ -817,7 +637,6 @@
   function forceMobileHeaderWhite() {
     if (!htmlEl.classList.contains('taj-snap-page') || !isMobile()) return;
 
-    /* Inject CSS once if not already (backup) */
     if (!document.getElementById('taj-mobile-header-white')) {
       var css = '@media (max-width:767px){html.taj-snap-page .t4s-header__wrapper{--h-text-color:#fff!important;--h-text-color-rgb:255,255,255!important}html.taj-snap-page .t4s-section-header a,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon,html.taj-snap-page .t4s-section-header .t4s-site-nav__icons a,html.taj-snap-page .t4s-section-header .t4s-site-nav__cart a{color:#fff!important}html.taj-snap-page .t4s-section-header svg{color:#fff!important;fill:#fff!important;stroke:#fff!important}}';
       var s = document.createElement('style');
@@ -826,7 +645,6 @@
       (document.head || document.documentElement).appendChild(s);
     }
 
-    /* Inline styles as backup */
     var wrapper = document.querySelector('.t4s-header__wrapper');
     if (wrapper) {
       wrapper.style.setProperty('--h-text-color', '#fff', 'important');
@@ -864,15 +682,12 @@
     clearTimeout(cooldownId);
 
     if (isMobile()) {
-      /* Mobile: instant scroll, don't disable scroll-snap-type
-         to avoid visual jumps — let native snap stay in control */
       window.scrollTo({ top: absTop, behavior: 'auto' });
       cooldownId = setTimeout(function() {
         setInView(true);
         unlock();
       }, 120);
     } else {
-      /* Desktop: temporarily disable snap for smooth programmatic scroll */
       htmlEl.style.scrollSnapType = 'none';
       window.scrollTo({ top: absTop, behavior: 'smooth' });
 
@@ -923,8 +738,6 @@
         setActiveDot(currentIndex);
         updateHeaderColor(currentIndex);
       }
-      /* On mobile, only add is-in-view during scroll (never remove).
-         After scroll settles, do a full cleanup pass. */
       setInView(false);
 
       if (isMobile()) {
@@ -939,9 +752,6 @@
   }
 
   function onTouchMove(e) {
-    /* On mobile, never block touch — let native CSS scroll-snap
-       handle the snapping to avoid jank and iOS conflicts.
-       Only block on desktop (e.g. trackpad touch surfaces). */
     if (isMobile()) return;
     if (isInsideHeader(e.target)) return;
     if (isAnimating) e.preventDefault();
@@ -1035,198 +845,16 @@
     init();
   }
 })();
-</script> 
+</script>
 
 {% schema %}
 {
-  "name": "Snap Scroll Lookbook",
-  "settings": [
-    {
-      "type": "header",
-      "content": "Panel 1 — Video Banner"
-    },
-    {
-      "type": "video",
-      "id": "video_1",
-      "label": "Video (uploaded)"
-    },
-    { 
-      "type": "text",  
-      "id": "video_1_url",
-      "label": "Video URL (external MP4)",
-      "info": "Use this if not uploading a video above"
-    },
-    {
-      "type": "video",
-      "id": "video_1_mobile",
-      "label": "Video (mobile)",
-      "info": "Optional — uses desktop video if empty"
-    },
-    {
-      "type": "text",
-      "id": "video_1_url_mobile",
-      "label": "Video URL (mobile, external MP4)",
-      "info": "Use this if not uploading a mobile video above"
-    },
-    {
-      "type": "header",
-      "content": "Images (shown when no video is selected)"
-    },
-    {
-      "type": "image_picker",
-      "id": "video_1_image_desktop",
-      "label": "Image (desktop)"
-    },
-    {
-      "type": "image_picker",
-      "id": "video_1_image_mobile",
-      "label": "Image (mobile)",
-      "info": "Optional — uses desktop image if empty"
-    },
-    {
-      "type": "text",
-      "id": "video_1_title",
-      "label": "Title"
-    },
-    { 
-      "type": "text",
-      "id": "video_1_cta_text",
-      "label": "CTA text",
-      "default": "Discover"
-    },
-    {
-      "type": "url",
-      "id": "video_1_cta_link",
-      "label": "CTA link"
-    },
-    {
-      "type": "header",
-      "content": "Panel 2 — Two Collections"
-    },
-    {
-      "type": "collection",
-      "id": "collection_1",
-      "label": "Collection 1"
-    },
-    {
-      "type": "url",
-      "id": "collection_1_link",
-      "label": "Collection 1 custom link",
-      "info": "Add custom URL to override collection link, or use with image when no collection selected"
-    },
-    {
-      "type": "image_picker",
-      "id": "collection_1_image",
-      "label": "Collection 1 image",
-      "info": "Override collection image (required if using custom link only)"
-    },
-    {
-      "type": "text",
-      "id": "collection_1_heading",
-      "label": "Collection 1 heading"
-    },
-    {
-      "type": "text",
-      "id": "collection_1_cta",
-      "label": "Collection 1 CTA text",
-      "default": "Explore"
-    },
-    {
-      "type": "collection",
-      "id": "collection_2",
-      "label": "Collection 2 (optional)"
-    },
-    {
-      "type": "url",
-      "id": "collection_2_link",
-      "label": "Collection 2 link — add URL",
-      "info": "Add link (e.g. Coming Soon page). Use when no collection, or to override collection URL."
-    },
-    {
-      "type": "image_picker",
-      "id": "collection_2_image",
-      "label": "Collection 2 image",
-      "info": "Override collection image (required if no collection)"
-    },
-    {
-      "type": "text",
-      "id": "collection_2_heading",
-      "label": "Collection 2 heading"
-    },
-    {
-      "type": "text",
-      "id": "collection_2_cta",
-      "label": "Collection 2 CTA text",
-      "default": "Discover"
-    },
-     {
-      "type": "header",
-      "content": "Panel 3 — Image Banner 1"
-    },
-    {
-      "type": "image_picker",
-      "id": "banner_1_image",
-      "label": "Banner image (desktop)"
-    },
-    {
-      "type": "image_picker",
-      "id": "banner_1_image_mobile",
-      "label": "Banner image (mobile)",
-      "info": "Optional — falls back to desktop image if empty"
-    },
-    {
-      "type": "text", 
-      "id": "banner_1_title",
-      "label": "Title"
-    },
-    {
-      "type": "text",
-      "id": "banner_1_cta_text",
-      "label": "CTA text",
-      "default": "Discover"
-    },
-    {
-      "type": "url",
-      "id": "banner_1_cta_link",
-      "label": "CTA link"
-    },
-    {
-      "type": "header",
-      "content": "Panel 4 — Image Banner 2"
-    },
-    {
-      "type": "image_picker",
-      "id": "banner_2_image",
-      "label": "Banner image (desktop)"
-    },
-    {
-      "type": "image_picker",
-      "id": "banner_2_image_mobile",
-      "label": "Banner image (mobile)",
-      "info": "Optional — falls back to desktop image if empty"
-    },
-    {
-      "type": "text",
-      "id": "banner_2_title",
-      "label": "Title"
-    },
-    {
-      "type": "text",
-      "id": "banner_2_cta_text",
-      "label": "CTA text",
-      "default": "Discover"
-    },
-    {
-      "type": "url",
-      "id": "banner_2_cta_link",
-      "label": "CTA link"
-    }
-  ],
+  "name": "Snapping Effect",
+  "settings": [],
   "presets": [
     {
-      "name": "Snap Scroll Lookbook"
+      "name": "Snapping Effect"
     }
   ]
 }
 {% endschema %}
-  

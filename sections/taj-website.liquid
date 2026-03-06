@@ -39,6 +39,7 @@
     overflow-y: scroll;
     overflow-x: hidden;
     overscroll-behavior-y: none;
+    scroll-behavior: smooth;
   }
   html.taj-snap-page::-webkit-scrollbar { display: none; }
 
@@ -904,9 +905,7 @@
     clearTimeout(cooldownId);
 
     if (isMobile()) {
-      /* Mobile: instant scroll, don't disable scroll-snap-type
-         to avoid visual jumps — let native snap stay in control */
-      window.scrollTo({ top: absTop, behavior: 'auto' });
+      window.scrollTo({ top: absTop, behavior: 'smooth' });
       /* Short cooldown to let the snap settle before allowing next scroll */
       cooldownId = setTimeout(function() {
         setInView(true);

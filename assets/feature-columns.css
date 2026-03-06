@@ -47,6 +47,31 @@
     }
 }
 
+/* 1.5 view carousel on mobile — Grid desktop, horizontal carousel mobile */
+@media (max-width: 767px) {
+    .t4s-feature-columns--mb-carousel-15 {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 10px;
+        margin: 0 -15px;
+        padding: 0 15px;
+    }
+    .t4s-feature-columns--mb-carousel-15::-webkit-scrollbar {
+        display: none;
+    }
+    .t4s-feature-columns--mb-carousel-15 > .t4s-col-item {
+        flex: 0 0 calc(66.666% - 7px) !important;
+        max-width: calc(66.666% - 7px) !important;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+    }
+}
+
 
 @media (-moz-touch-enabled: 0), (hover: hover) {
     .t4s-feature-columns__title a:hover{color:var(--accent-color);}

@@ -67,19 +67,19 @@
   }
 
   html.taj-snap-page .t4s-header__wrapper {
-    background-color: transparent !important;
+    background-color: #fff !important;
   }
 
   @media (min-width: 768px) {
     html.taj-snap-page.taj-header-light .t4s-header__wrapper {
-      --h-text-color: #fff !important;
-      --h-text-color-hover: rgba(255,255,255,0.7) !important;
-      --h-bg-color: transparent !important;
+      --h-text-color: #000 !important;
+      --h-text-color-hover: rgba(0,0,0,0.6) !important;
+      --h-bg-color: #fff !important;
     }
     html.taj-snap-page.taj-header-dark .t4s-header__wrapper {
       --h-text-color: #000 !important;
       --h-text-color-hover: rgba(0,0,0,0.6) !important;
-      --h-bg-color: transparent !important;
+      --h-bg-color: #fff !important;
     }
   }
 
@@ -790,8 +790,6 @@
     }
   }
 
-  var WHITE_LOGO = 'https://cdn.shopify.com/s/files/1/0720/2868/4423/files/54548548.png?v=1771260571';
-
   function updateHeaderColor(index) {
     var logo = document.querySelector('.header__normal-logo');
     if (logo && !logo.dataset.originalSrc) {
@@ -799,10 +797,10 @@
       logo.dataset.originalSrcset = logo.srcset || '';
     }
 
+    /* Solid white header — use dark logo for all panels */
     if (index === 0) {
       htmlEl.classList.add('taj-header-light');
       htmlEl.classList.remove('taj-header-dark');
-      if (logo) { logo.src = WHITE_LOGO; logo.srcset = ''; }
     } else {
       htmlEl.classList.remove('taj-header-light');
       htmlEl.classList.add('taj-header-dark');

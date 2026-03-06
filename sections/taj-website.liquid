@@ -66,59 +66,8 @@
     transition: --h-text-color 0.18s ease, --h-bg-color 0.18s ease;
   }
 
-  html.taj-snap-page .t4s-header__wrapper {
-    background-color: #fff !important;
-  }
 
-  @media (min-width: 768px) {
-    html.taj-snap-page.taj-header-light .t4s-header__wrapper {
-      --h-text-color: #000 !important;
-      --h-text-color-hover: rgba(0,0,0,0.6) !important;
-      --h-bg-color: #fff !important;
-    }
-    html.taj-snap-page.taj-header-dark .t4s-header__wrapper {
-      --h-text-color: #000 !important;
-      --h-text-color-hover: rgba(0,0,0,0.6) !important;
-      --h-bg-color: #fff !important;
-    }
-  }
-
-  /* ═══ MOBILE: white header icons + white menu drawer (snap page only)
-      Override .is-header--stuck so theme sticky header colors don’t switch to black ═══ */
-  @media (max-width: 767px) {
-    html.taj-snap-page .t4s-header__wrapper,
-    html.taj-snap-page .is-header--stuck .t4s-header__wrapper {
-      --h-text-color: #fff !important;
-      --h-text-color-hover: rgba(255,255,255,0.8) !important;
-      --h-text-color-rgb: 255, 255, 255 !important;
-    }
-    html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,
-    html.taj-snap-page .t4s-section-header .t4s-site-nav__cart > a,
-    html.taj-snap-page .t4s-section-header .t4s-site-nav__icon a,
-    html.taj-snap-page .is-header--stuck .t4s-push-menu-btn,
-    html.taj-snap-page .is-header--stuck .t4s-site-nav__cart > a,
-    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a {
-      color: #fff !important;
-    }
-    html.taj-snap-page .t4s-section-header .t4s-push-menu-btn svg,
-    html.taj-snap-page .t4s-section-header .t4s-site-nav__icon svg,
-    html.taj-snap-page .t4s-section-header .t4s-site-nav__icon a svg,
-    html.taj-snap-page .is-header--stuck .t4s-push-menu-btn svg,
-    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon svg,
-    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a svg {
-      color: #fff !important;
-      fill: #fff !important;
-    }
-    html.taj-snap-page .t4s-push-menu-btn:hover,
-    html.taj-snap-page .t4s-site-nav__cart > a:hover,
-    html.taj-snap-page .t4s-site-nav__icon a:hover,
-    html.taj-snap-page .is-header--stuck .t4s-push-menu-btn:hover,
-    html.taj-snap-page .is-header--stuck .t4s-site-nav__cart > a:hover,
-    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a:hover {
-      color: rgba(255,255,255,0.8) !important;
-    }
-    /* Menu drawer keeps theme default (dark text) - white background needs readable text */
-  }
+  /* Header: no overrides - uses theme original solid header from header-inline */
 
   html.taj-snap-page #shopify-section-announcement-bar,
   html.taj-snap-page #shopify-section-top-bar {
@@ -504,8 +453,14 @@
   {% if section.settings.video_1_mobile != blank or section.settings.video_1_url_mobile != blank %}
     {% assign has_video_mobile = true %}
   {% endif %}
-  {% assign has_banner_desktop = section.settings.video_1_image_desktop != blank %}
-  {% assign has_banner_mobile = section.settings.video_1_image_mobile != blank %}
+  {% assign has_banner_desktop = false %}
+  {% if section.settings.video_1_image_desktop != blank %}
+    {% assign has_banner_desktop = true %}
+  {% endif %}
+  {% assign has_banner_mobile = false %}
+  {% if section.settings.video_1_image_mobile != blank %}
+    {% assign has_banner_mobile = true %}
+  {% endif %}
   {% if has_video_desktop or has_video_mobile or has_banner_desktop or has_banner_mobile %}
     <div class="taj-snap__panel" data-snap-panel>
       {%- comment -%} Desktop: video or static image {%- endcomment -%}
@@ -558,8 +513,18 @@
   {% endif %}
 
   {%- comment -%} Panel 2: Two Collections {%- endcomment -%}
-  {% assign show_col1 = section.settings.collection_1 != blank or (section.settings.collection_1_link != blank and section.settings.collection_1_image != blank) %}
-  {% assign show_col2 = section.settings.collection_2 != blank or (section.settings.collection_2_link != blank and section.settings.collection_2_image != blank) %}
+  {% assign show_col1 = false %}
+  {% if section.settings.collection_1 != blank %}
+    {% assign show_col1 = true %}
+  {% elsif section.settings.collection_1_link != blank and section.settings.collection_1_image != blank %}
+    {% assign show_col1 = true %}
+  {% endif %}
+  {% assign show_col2 = false %}
+  {% if section.settings.collection_2 != blank %}
+    {% assign show_col2 = true %}
+  {% elsif section.settings.collection_2_link != blank and section.settings.collection_2_image != blank %}
+    {% assign show_col2 = true %}
+  {% endif %}
   {% if show_col1 or show_col2 %}
     <div class="taj-snap__panel taj-snap__panel--collections" data-snap-panel data-snap-collections>
       <div class="taj-snap__collections">
@@ -667,21 +632,6 @@
 <script>
 (function() {
   'use strict';
-
-  /* Inject mobile header white CSS immediately - must run before theme scripts */
-  if (document.documentElement.classList.contains('taj-snap-page') && window.innerWidth <= 767) {
-    if (!document.getElementById('taj-mobile-header-white')) {
-      var css = '@media (max-width:767px){' +
-        'html.taj-snap-page .t4s-section-header .t4s-header__wrapper,html.taj-snap-page .t4s-header__wrapper,html.taj-snap-page body .t4s-header__wrapper{--h-text-color:#fff!important;--h-text-color-hover:rgba(255,255,255,0.8)!important;--h-text-color-rgb:255,255,255!important}' +
-        'html.taj-snap-page .t4s-section-header a,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon,html.taj-snap-page .t4s-section-header .t4s-site-nav__icons a,html.taj-snap-page .t4s-section-header .t4s-site-nav__cart a,html.taj-snap-page .t4s-section-header .t4s-col-group_btns a,html.taj-snap-page .t4s-section-header .t4s-col-group_btns .t4s-push-menu-btn{color:#fff!important}' +
-        'html.taj-snap-page .t4s-section-header svg,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn svg,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon svg,html.taj-snap-page .t4s-section-header .t4s-col-group_btns svg{color:#fff!important;fill:#fff!important;stroke:#fff!important}' +
-      '}';
-      var s = document.createElement('style');
-      s.id = 'taj-mobile-header-white';
-      s.textContent = css;
-      (document.head || document.documentElement).appendChild(s);
-    }
-  }
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -791,57 +741,7 @@
   }
 
   function updateHeaderColor(index) {
-    var logo = document.querySelector('.header__normal-logo');
-    if (logo && !logo.dataset.originalSrc) {
-      logo.dataset.originalSrc = logo.src;
-      logo.dataset.originalSrcset = logo.srcset || '';
-    }
-
-    /* Solid white header — use dark logo for all panels */
-    if (index === 0) {
-      htmlEl.classList.add('taj-header-light');
-      htmlEl.classList.remove('taj-header-dark');
-    } else {
-      htmlEl.classList.remove('taj-header-light');
-      htmlEl.classList.add('taj-header-dark');
-      if (logo && logo.dataset.originalSrc) {
-        logo.src = logo.dataset.originalSrc;
-        logo.srcset = logo.dataset.originalSrcset;
-      }
-    }
-    if (isMobile()) forceMobileHeaderWhite();
-  }
-
-  function forceMobileHeaderWhite() {
-    if (!htmlEl.classList.contains('taj-snap-page') || !isMobile()) return;
-
-    /* Inject CSS once if not already (backup) */
-    if (!document.getElementById('taj-mobile-header-white')) {
-      var css = '@media (max-width:767px){html.taj-snap-page .t4s-header__wrapper{--h-text-color:#fff!important;--h-text-color-rgb:255,255,255!important}html.taj-snap-page .t4s-section-header a,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon,html.taj-snap-page .t4s-section-header .t4s-site-nav__icons a,html.taj-snap-page .t4s-section-header .t4s-site-nav__cart a{color:#fff!important}html.taj-snap-page .t4s-section-header svg{color:#fff!important;fill:#fff!important;stroke:#fff!important}}';
-      var s = document.createElement('style');
-      s.id = 'taj-mobile-header-white';
-      s.textContent = css;
-      (document.head || document.documentElement).appendChild(s);
-    }
-
-    /* Inline styles as backup */
-    var wrapper = document.querySelector('.t4s-header__wrapper');
-    if (wrapper) {
-      wrapper.style.setProperty('--h-text-color', '#fff', 'important');
-      wrapper.style.setProperty('--h-text-color-hover', 'rgba(255,255,255,0.8)', 'important');
-      wrapper.style.setProperty('--h-text-color-rgb', '255, 255, 255', 'important');
-    }
-    var header = document.querySelector('.t4s-section-header');
-    if (header) {
-      [].forEach.call(header.querySelectorAll('a, .t4s-push-menu-btn, .t4s-site-nav__icon'), function(el) {
-        el.style.setProperty('color', '#fff', 'important');
-      });
-      [].forEach.call(header.querySelectorAll('svg'), function(el) {
-        el.style.setProperty('color', '#fff', 'important');
-        el.style.setProperty('fill', '#fff', 'important');
-        el.style.setProperty('stroke', '#fff', 'important');
-      });
-    }
+    /* Header uses theme defaults — no overrides */
   }
 
   function unlock() {
@@ -994,7 +894,6 @@
       setActiveDot(currentIndex);
       updateHeaderColor(currentIndex);
       setInView();
-      if (isMobile()) forceMobileHeaderWhite();
     }, 250);
   }
 
@@ -1003,19 +902,9 @@
     buildDots();
     setInView();
     updateHeaderColor(0);
-    if (isMobile()) forceMobileHeaderWhite();
 
     if (targets.length > 0) {
       targets[0].classList.add('is-in-view');
-    }
-
-    if (isMobile()) {
-      window.addEventListener('load', forceMobileHeaderWhite);
-      var mo = new MutationObserver(function() {
-        if (isMobile()) forceMobileHeaderWhite();
-      });
-      mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-      mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     }
 
     window.addEventListener('wheel', onWheel, { passive: false });

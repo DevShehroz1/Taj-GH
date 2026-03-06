@@ -1,19 +1,13 @@
 <script>
   document.documentElement.classList.add('taj-snap-page');
   (function() {
-    function setVh() {
-      var h = window.innerHeight;
-      document.documentElement.style.setProperty('--mobile-vh', h + 'px');
-    }
+    var setVh = function() {
+      document.documentElement.style.setProperty('--taj-vh', window.innerHeight + 'px');
+    };
     setVh();
-    if (window.innerWidth <= 767) {
-      window.addEventListener('resize', setVh);
-      window.addEventListener('orientationchange', function() { setTimeout(setVh, 100); });
-      if (window.visualViewport) window.visualViewport.addEventListener('resize', setVh);
-      document.addEventListener('DOMContentLoaded', setVh);
-      setTimeout(setVh, 100);
-      setTimeout(setVh, 500);
-    }
+    window.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', function() { setTimeout(setVh, 150); });
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', setVh);
   })();
 </script>
 
@@ -379,19 +373,20 @@
   }
 
   /* ═══ MOBILE — max-width: 767px
-      One full banner only — no peeking of next. Use exact viewport height. ═══ */
+      One full banner only. --taj-vh = actual innerHeight for iOS Safari. ═══ */
 
   @media (max-width: 767px) {
     html.taj-snap-page {
       overscroll-behavior-y: none;
+      -webkit-overflow-scrolling: touch;
     }
     .taj-snap__panel {
       scroll-snap-align: start;
       scroll-snap-stop: always;
       min-height: 100vh;
-      min-height: var(--mobile-vh, 100vh);
       height: 100vh;
-      height: var(--mobile-vh, 100vh);
+      height: var(--taj-vh, 100vh);
+      min-height: var(--taj-vh, 100vh);
     }
     .taj-snap__media--desktop { display: none;  }
     .taj-snap__media--mobile  { display: block; }
@@ -412,9 +407,9 @@
       scroll-snap-align: start;
       scroll-snap-stop: always;
       min-height: 100vh;
-      min-height: var(--mobile-vh, 100vh);
       height: 100vh;
-      height: var(--mobile-vh, 100vh);
+      height: var(--taj-vh, 100vh);
+      min-height: var(--taj-vh, 100vh);
       flex: none;
     }
     .taj-snap__col-image img {
@@ -429,6 +424,12 @@
     .taj-snap__cta      { font-size: 11px; }
     .taj-snap__overlay  { padding-bottom: 46px; }
 
+    .taj-extra-snap,
+    html.taj-snap-page #t4s-footer {
+      scroll-snap-align: start;
+      min-height: 100vh;
+      height: var(--taj-vh, 100vh);
+    }
     .taj-snap-dots {
       right: 14px;
       gap: 8px;
@@ -643,7 +644,6 @@
 
   var MOBILE_BP = 767;
   var WHEEL_THRESHOLD = 50;
-  var COOLDOWN_MS = 800;
 
   var htmlEl = document.documentElement;
   var dotsNav = document.querySelector('.taj-snap-dots');
@@ -654,11 +654,6 @@
   var wheelDelta = 0;
   var wheelTimer = null;
   var scrollRAF = null;
-  var lastStableIndex = 0;
-
-  var touchStartY = 0;
-  var touchCooldown = false;
-  var touchCooldownId = null;
 
   function isMobile() {
     return window.innerWidth <= MOBILE_BP;
@@ -737,11 +732,14 @@
   }
 
   function detectIndex() {
+    var vh = window.innerHeight;
+    var viewportMid = vh * 0.5;
     var best = 0;
     var bestDist = Infinity;
     for (var i = 0; i < targets.length; i++) {
       var rect = targets[i].getBoundingClientRect();
-      var dist = Math.abs(rect.top);
+      var targetMid = rect.top + rect.height * 0.5;
+      var dist = Math.abs(targetMid - viewportMid);
       if (dist < bestDist) {
         bestDist = dist;
         best = i;
@@ -825,7 +823,6 @@
   function scrollToIndex(index) {
     if (index < 0 || index >= targets.length || isAnimating) return;
     isAnimating = true;
-    lastStableIndex = currentIndex;
     currentIndex = index;
     setActiveDot(index);
     updateHeaderColor(index);
@@ -833,38 +830,40 @@
     htmlEl.style.scrollSnapType = 'none';
 
     var rect = targets[index].getBoundingClientRect();
-    var scrollTop = window.pageYOffset || htmlEl.scrollTop;
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     var absTop;
     if (isMobile()) {
-      /* Mobile: align start (top) — one full banner, no peek */
       absTop = rect.top + scrollTop;
     } else {
-      /* Desktop: center */
       var vh = window.innerHeight;
       var targetHeight = rect.height;
       absTop = rect.top + scrollTop - (vh * 0.5) + (targetHeight * 0.5);
     }
     absTop = Math.max(0, Math.round(absTop));
 
-    window.scrollTo({ top: absTop, behavior: 'smooth' });
+    /* Mobile: instant scroll avoids conflict with native touch scroll-snap */
+    var behavior = isMobile() ? 'auto' : 'smooth';
+    window.scrollTo({ top: absTop, behavior: behavior });
 
     clearTimeout(cooldownId);
 
     function finish() {
       htmlEl.style.scrollSnapType = '';
-      setTimeout(unlock, 60);
+      setTimeout(unlock, 80);
     }
 
-    if ('onscrollend' in window) {
+    if (isMobile()) {
+      finish();
+    } else if ('onscrollend' in window) {
       var done = function() {
         window.removeEventListener('scrollend', done);
         clearTimeout(cooldownId);
         finish();
       };
       window.addEventListener('scrollend', done);
-      cooldownId = setTimeout(finish, 1200);
+      cooldownId = setTimeout(finish, 1000);
     } else {
-      cooldownId = setTimeout(finish, 800);
+      cooldownId = setTimeout(finish, 700);
     }
   }
 
@@ -891,18 +890,6 @@
     if (scrollRAF) return;
     scrollRAF = requestAnimationFrame(function() {
       scrollRAF = null;
-
-      if (touchCooldown && !isAnimating) {
-        var detected = detectIndex();
-        if (Math.abs(detected - lastStableIndex) > 2) {
-          var corrected = lastStableIndex + (detected > lastStableIndex ? 1 : -1);
-          touchCooldown = false;
-          clearTimeout(touchCooldownId);
-          scrollToIndex(corrected);
-          return;
-        }
-      }
-
       if (!isAnimating) {
         currentIndex = detectIndex();
         setActiveDot(currentIndex);
@@ -912,31 +899,9 @@
     });
   }
 
-  function onTouchStart(e) {
-    if (isAnimating || touchCooldown) return;
-    touchStartY = e.touches[0].clientY;
-  }
-
   function onTouchMove(e) {
     if (isInsideHeader(e.target)) return;
-    if (isAnimating || touchCooldown) {
-      e.preventDefault();
-    }
-  }
-
-  function onTouchEnd(e) {
-    if (isAnimating || touchCooldown) return;
-    if (isInsideHeader(e.target)) return;
-
-    var deltaY = touchStartY - e.changedTouches[0].clientY;
-    if (Math.abs(deltaY) > 40) {
-      lastStableIndex = detectIndex();
-      touchCooldown = true;
-      clearTimeout(touchCooldownId);
-      touchCooldownId = setTimeout(function() {
-        touchCooldown = false;
-      }, 600);
-    }
+    if (isAnimating) e.preventDefault();
   }
 
   function onKeydown(e) {
@@ -1003,22 +968,11 @@
       targets[0].classList.add('is-in-view');
     }
 
-    /* Re-apply mobile header white to override theme scripts that run after load */
     if (isMobile()) {
-      [50, 150, 300, 500, 800, 1200, 2000].forEach(function(ms) {
-        setTimeout(forceMobileHeaderWhite, ms);
+      window.addEventListener('load', forceMobileHeaderWhite);
+      var mo = new MutationObserver(function() {
+        if (isMobile()) forceMobileHeaderWhite();
       });
-      window.addEventListener('load', function() {
-        forceMobileHeaderWhite();
-        setTimeout(forceMobileHeaderWhite, 100);
-      });
-      /* Re-apply when theme adds is-header--stuck (can be on html or body) */
-      var checkStuck = function() {
-        if (isMobile() && (document.documentElement.classList.contains('is-header--stuck') || document.body.classList.contains('is-header--stuck'))) {
-          forceMobileHeaderWhite();
-        }
-      };
-      var mo = new MutationObserver(checkStuck);
       mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
       mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     }
@@ -1027,10 +981,7 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('keydown', onKeydown);
     window.addEventListener('resize', onResize);
-
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: false });
-    window.addEventListener('touchend', onTouchEnd, { passive: true });
 
     if (dotsNav) dotsNav.addEventListener('click', onDotClick);
   }

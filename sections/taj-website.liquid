@@ -1,23 +1,26 @@
 <script>
   document.documentElement.classList.add('taj-snap-page');
   (function() {
+    /* Set --taj-vh to LARGE viewport (full screen) so panels extend under
+       transparent browser bar — prevents next section peeking through. */
     var setVh = function() {
-      var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+      var h = Math.max(
+        window.innerHeight || 0,
+        (window.visualViewport && window.visualViewport.height) || 0,
+        document.documentElement.clientHeight || 0
+      );
       document.documentElement.style.setProperty('--taj-vh', Math.round(h) + 'px');
     };
     setVh();
     window.addEventListener('resize', setVh);
-    window.addEventListener('orientationchange', function() { setTimeout(setVh, 200); });
+    window.addEventListener('orientationchange', function() { setTimeout(setVh, 250); });
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', setVh);
-      /* Do NOT listen to visualViewport 'scroll' — on iOS Safari
-         it fires during toolbar show/hide animation, causing --taj-vh
-         to change mid-scroll which shifts snap points and causes peeking */
     }
     document.addEventListener('DOMContentLoaded', function() {
       setVh();
-      setTimeout(setVh, 100);
-      setTimeout(setVh, 350);
+      setTimeout(setVh, 150);
+      setTimeout(setVh, 400);
     });
   })();
 </script>
@@ -60,7 +63,7 @@
     box-sizing: border-box;
     box-shadow: none !important;
     border: none !important;
-    transition: --h-text-color 0.3s ease, --h-bg-color 0.3s ease;
+    transition: --h-text-color 0.18s ease, --h-bg-color 0.18s ease;
   }
 
   html.taj-snap-page .t4s-header__wrapper {
@@ -275,8 +278,8 @@
   /* ═══ EXTRA SECTIONS AS SNAP TARGETS ═══ */
 
   .taj-extra-snap {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
     min-height: 100vh;
     min-height: 100dvh;
     display: flex !important;
@@ -290,7 +293,7 @@
   .taj-extra-snap > * {
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.8s ease 0.1s, transform 0.8s ease 0.1s;
+    transition: opacity 0.35s ease 0.05s, transform 0.35s ease 0.05s;
     will-change: opacity, transform;
   }
   .taj-extra-snap.is-in-view > * {
@@ -298,16 +301,11 @@
     transform: translateY(0);
   }
 
-  /* ═══ FOOTER AS LAST SNAP TARGET ═══ */
+  /* ═══ FOOTER — no snapping, scroll freely ═══ */
 
   html.taj-snap-page #t4s-footer {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
   }
 
   /* ═══ DOT INDICATORS ═══ */
@@ -332,7 +330,7 @@
     border: 1.5px solid rgba(255,255,255,0.7);
     background: transparent;
     cursor: pointer;
-    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
     padding: 0;
     -webkit-appearance: none;
     appearance: none;
@@ -346,12 +344,12 @@
     transform: scale(1.35);
   }
 
-  /* ═══ PANEL ENTRANCE ANIMATIONS ═══ */
+  /* ═══ PANEL ENTRANCE ANIMATIONS — fast, minimal delay ═══ */
 
   .taj-snap__overlay > * {
     opacity: 0;
     transform: translateY(18px);
-    transition: opacity 0.7s ease 0.15s, transform 0.7s ease 0.15s;
+    transition: opacity 0.4s ease 0.03s, transform 0.4s ease 0.03s;
     will-change: opacity, transform;
   }
   .taj-snap__panel.is-in-view .taj-snap__overlay > * {
@@ -359,12 +357,12 @@
     transform: translateY(0);
   }
   .taj-snap__panel.is-in-view .taj-snap__overlay > *:nth-child(2) {
-    transition-delay: 0.35s;
+    transition-delay: 0.08s;
   }
   .taj-snap__col-info {
     opacity: 0;
     transform: translateY(14px);
-    transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+    transition: opacity 0.35s ease 0.03s, transform 0.35s ease 0.03s;
     will-change: opacity, transform;
   }
   .taj-snap__panel.is-in-view .taj-snap__col-info,
@@ -374,20 +372,19 @@
   }
 
   /* ═══ MOBILE — max-width: 767px
-      One full banner only. --taj-vh from visualViewport for iOS Safari/Chrome. ═══ */
+      Strict: one banner only, no peeking through transparent browser bar. ═══ */
 
   @media (max-width: 767px) {
     html.taj-snap-page {
-      /* Use proximity instead of mandatory so that banner panels
-         still snap crisply, but content after the last panel
-         (extra sections, footer) scrolls freely without snapping back */
-      scroll-snap-type: y proximity;
+      scroll-snap-type: y mandatory;
       overscroll-behavior-y: none;
+      -webkit-overflow-scrolling: touch;
+      overflow-x: hidden;
     }
-    /* Remove any theme-injected spacing that offsets snap panels */
     html.taj-snap-page body {
       padding-top: 0 !important;
       margin-top: 0 !important;
+      overflow-x: hidden;
     }
     html.taj-snap-page #MainContent {
       padding-top: 0 !important;
@@ -396,15 +393,17 @@
     .taj-snap__panel {
       scroll-snap-align: start;
       scroll-snap-stop: always;
-      /* Use 100vh (large viewport on iOS) — constant value that never
-         changes during toolbar show/hide, keeping snap points stable.
-         Panels extend slightly behind the toolbar when visible, which
-         hides the next panel completely — no peeking. */
-      height: 100vh;
-      min-height: 100vh;
-      max-height: 100vh;
+      height: var(--taj-vh, 100vh);
+      min-height: var(--taj-vh, 100vh);
       overflow: hidden;
       box-sizing: border-box;
+      position: relative;
+    }
+    @supports (height: 100lvh) {
+      .taj-snap__panel {
+        height: 100lvh;
+        min-height: 100lvh;
+      }
     }
     .taj-snap__media--desktop { display: none;  }
     .taj-snap__media--mobile  { display: block; }
@@ -426,12 +425,18 @@
     .taj-snap__col-card {
       scroll-snap-align: start;
       scroll-snap-stop: always;
-      height: 100vh;
-      min-height: 100vh;
-      max-height: 100vh;
+      height: var(--taj-vh, 100vh);
+      min-height: var(--taj-vh, 100vh);
       flex: none;
       overflow: hidden;
       box-sizing: border-box;
+      position: relative;
+    }
+    @supports (height: 100lvh) {
+      .taj-snap__col-card {
+        height: 100lvh;
+        min-height: 100lvh;
+      }
     }
     .taj-snap__col-image img {
       object-fit: cover;
@@ -445,10 +450,10 @@
     .taj-snap__cta      { font-size: 11px; }
     .taj-snap__overlay  { padding-bottom: 46px; }
 
-    .taj-extra-snap,
+    html.taj-snap-page .t4s-feature-columns,
     html.taj-snap-page #t4s-footer {
-      scroll-snap-align: none;
-      scroll-snap-stop: normal;
+      scroll-snap-align: none !important;
+      scroll-snap-stop: normal !important;
       height: auto;
       min-height: 0;
       max-height: none;
@@ -724,28 +729,7 @@
       }
     }
 
-    /* On mobile, don't snap the extra sections or footer —
-       let them scroll naturally after the banner panels */
-    if (!isMobile()) {
-      var mainEl = document.getElementById('MainContent');
-      var footer = document.getElementById('t4s-footer');
-      if (mainEl) {
-        var children = mainEl.children;
-        var foundSnap = false;
-        for (var i = 0; i < children.length; i++) {
-          var child = children[i];
-          if (child.querySelector('.taj-snap') || child.querySelector('[data-snap-panel]')) {
-            foundSnap = true;
-            continue;
-          }
-          if (foundSnap && child.children.length > 0) {
-            child.classList.add('taj-extra-snap');
-            targets.push(child);
-          }
-        }
-      }
-      if (footer) targets.push(footer);
-    }
+    /* Extra sections and footer: no snapping — scroll freely after banner panels */
   }
 
   function buildDots() {
@@ -881,11 +865,10 @@
       /* Mobile: instant scroll, don't disable scroll-snap-type
          to avoid visual jumps — let native snap stay in control */
       window.scrollTo({ top: absTop, behavior: 'auto' });
-      /* Short cooldown to let the snap settle before allowing next scroll */
       cooldownId = setTimeout(function() {
         setInView(true);
         unlock();
-      }, 300);
+      }, 120);
     } else {
       /* Desktop: temporarily disable snap for smooth programmatic scroll */
       htmlEl.style.scrollSnapType = 'none';
@@ -903,9 +886,9 @@
           finish();
         };
         window.addEventListener('scrollend', done);
-        cooldownId = setTimeout(finish, 1000);
+        cooldownId = setTimeout(finish, 500);
       } else {
-        cooldownId = setTimeout(finish, 700);
+        cooldownId = setTimeout(finish, 400);
       }
     }
   }
@@ -948,7 +931,7 @@
         scrollSettleTimer = setTimeout(function() {
           isScrolling = false;
           setInView(true);
-        }, 150);
+        }, 80);
       }
     });
   }

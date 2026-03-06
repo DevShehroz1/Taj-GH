@@ -374,7 +374,6 @@
   @media (max-width: 767px) {
     html.taj-snap-page {
       overscroll-behavior-y: none;
-      -webkit-overflow-scrolling: touch;
     }
     .taj-snap__panel {
       scroll-snap-align: start;
@@ -664,6 +663,8 @@
   var wheelDelta = 0;
   var wheelTimer = null;
   var scrollRAF = null;
+  var scrollSettleTimer = null;
+  var isScrolling = false;
 
   function isMobile() {
     return window.innerWidth <= MOBILE_BP;
@@ -758,13 +759,15 @@
     return best;
   }
 
-  function setInView() {
+  function setInView(forceCleanup) {
     for (var i = 0; i < targets.length; i++) {
       var rect = targets[i].getBoundingClientRect();
       var visible = rect.top < window.innerHeight * 0.6 && rect.bottom > window.innerHeight * 0.4;
       if (visible) {
         targets[i].classList.add('is-in-view');
-      } else {
+      } else if (!isMobile() || forceCleanup) {
+        /* On mobile, only remove is-in-view after scroll has settled
+           to prevent entrance animations from flickering mid-snap */
         targets[i].classList.remove('is-in-view');
       }
     }

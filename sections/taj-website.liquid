@@ -517,7 +517,8 @@
   {% endif %}
 
   {%- comment -%} Panel 2: Two Collections {%- endcomment -%}
-  {% if section.settings.collection_1 != blank or section.settings.collection_2 != blank %}
+  {% assign show_col2 = section.settings.collection_2 != blank or (section.settings.collection_2_link != blank and section.settings.collection_2_image != blank) %}
+  {% if section.settings.collection_1 != blank or show_col2 %}
     <div class="taj-snap__panel taj-snap__panel--collections" data-snap-panel data-snap-collections>
       <div class="taj-snap__collections">
 
@@ -538,27 +539,27 @@
           </div>
         {% endif %}
 
-        {% comment %} Collection 2: shows when collection OR (image + link URL) — link uses URL if set, else collection URL {% endcomment %}
-        {% assign col2_url = section.settings.collection_2_link %}
-        {% if col2_url == blank and section.settings.collection_2 != blank %}
-          {% assign col2_url = section.settings.collection_2.url %}
-        {% endif %}
-        {% assign show_col2 = section.settings.collection_2 != blank or (section.settings.collection_2_image != blank and col2_url != blank) %}
         {% if show_col2 %}
           {% assign col2 = section.settings.collection_2 %}
+          {% assign col2_url = section.settings.collection_2_link %}
+          {% if col2 != blank and section.settings.collection_2_link == blank %}
+            {% assign col2_url = col2.url %}
+          {% endif %}
+          {% if col2_url != blank %}
           <div class="taj-snap__col-card" data-snap-col>
-            <a href="{{ col2_url | default: '#' }}" class="taj-snap__col-image">
+            <a href="{{ col2_url }}" class="taj-snap__col-image">
               {% if section.settings.collection_2_image != blank %}
-                <img src="{{ section.settings.collection_2_image | image_url: width: 800 }}" alt="{{ section.settings.collection_2_heading | default: 'Collection' | escape }}" loading="lazy">
-              {% elsif col2 and col2.image %}
+                <img src="{{ section.settings.collection_2_image | image_url: width: 800 }}" alt="{{ section.settings.collection_2_heading | default: col2.title | escape }}" loading="lazy">
+              {% elsif col2 != blank and col2.image %}
                 <img src="{{ col2.image | image_url: width: 800 }}" alt="{{ section.settings.collection_2_heading | default: col2.title | escape }}" loading="lazy">
               {% endif %}
             </a>
             <div class="taj-snap__col-info">
-              <p class="taj-snap__col-title">{% if section.settings.collection_2_heading != blank %}{{ section.settings.collection_2_heading }}{% elsif col2 %}{{ col2.title }}{% else %}Coming Soon{% endif %}</p>
-              <a href="{{ col2_url | default: '#' }}" class="taj-snap__col-cta">{{ section.settings.collection_2_cta | default: 'Discover' }}</a>
+              <p class="taj-snap__col-title">{{ section.settings.collection_2_heading | default: col2.title | default: 'Collection' }}</p>
+              <a href="{{ col2_url }}" class="taj-snap__col-cta">{{ section.settings.collection_2_cta | default: 'Discover' }}</a>
             </div>
           </div>
+          {% endif %}
         {% endif %}
 
       </div>
@@ -1101,8 +1102,8 @@
     {
       "type": "url",
       "id": "collection_2_link",
-      "label": "Collection 2 link URL",
-      "info": "Link for this card. If no collection is selected, card uses image/heading/CTA above and redirects here. If collection is selected, this overrides the collection URL."
+      "label": "Collection 2 link (URL)",
+      "info": "Required when no collection selected. When set, overrides collection URL."
     },
      {
       "type": "header",

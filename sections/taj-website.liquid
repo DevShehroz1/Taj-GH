@@ -549,13 +549,13 @@
           <div class="taj-snap__col-card" data-snap-col>
             <a href="{{ col2_url }}" class="taj-snap__col-image">
               {% if section.settings.collection_2_image != blank %}
-                <img src="{{ section.settings.collection_2_image | image_url: width: 800 }}" alt="{{ section.settings.collection_2_heading | default: col2.title | escape }}" loading="lazy">
+                <img src="{{ section.settings.collection_2_image | image_url: width: 800 }}" alt="{{ section.settings.collection_2_heading | default: 'Collection 2' | escape }}" loading="lazy">
               {% elsif col2 != blank and col2.image %}
                 <img src="{{ col2.image | image_url: width: 800 }}" alt="{{ section.settings.collection_2_heading | default: col2.title | escape }}" loading="lazy">
               {% endif %}
             </a>
             <div class="taj-snap__col-info">
-              <p class="taj-snap__col-title">{{ section.settings.collection_2_heading | default: col2.title | default: 'Collection' }}</p>
+              <p class="taj-snap__col-title">{% if section.settings.collection_2_heading != blank %}{{ section.settings.collection_2_heading }}{% elsif col2 != blank %}{{ col2.title }}{% else %}Collection{% endif %}</p>
               <a href="{{ col2_url }}" class="taj-snap__col-cta">{{ section.settings.collection_2_cta | default: 'Discover' }}</a>
             </div>
           </div>

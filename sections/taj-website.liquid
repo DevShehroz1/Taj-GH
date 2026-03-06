@@ -443,12 +443,12 @@
 
     .taj-extra-snap,
     html.taj-snap-page #t4s-footer {
-      scroll-snap-align: start;
-      height: 100vh;
-      min-height: 100vh;
-      max-height: 100vh;
-      overflow: hidden;
-      box-sizing: border-box;
+      scroll-snap-align: none;
+      scroll-snap-stop: normal;
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      overflow: visible;
     }
     .taj-snap-dots {
       right: 14px;
@@ -720,24 +720,28 @@
       }
     }
 
-    var mainEl = document.getElementById('MainContent');
-    var footer = document.getElementById('t4s-footer');
-    if (mainEl) {
-      var children = mainEl.children;
-      var foundSnap = false;
-      for (var i = 0; i < children.length; i++) {
-        var child = children[i];
-        if (child.querySelector('.taj-snap') || child.querySelector('[data-snap-panel]')) {
-          foundSnap = true;
-          continue;
-        }
-        if (foundSnap && child.children.length > 0) {
-          child.classList.add('taj-extra-snap');
-          targets.push(child);
+    /* On mobile, don't snap the extra sections or footer —
+       let them scroll naturally after the banner panels */
+    if (!isMobile()) {
+      var mainEl = document.getElementById('MainContent');
+      var footer = document.getElementById('t4s-footer');
+      if (mainEl) {
+        var children = mainEl.children;
+        var foundSnap = false;
+        for (var i = 0; i < children.length; i++) {
+          var child = children[i];
+          if (child.querySelector('.taj-snap') || child.querySelector('[data-snap-panel]')) {
+            foundSnap = true;
+            continue;
+          }
+          if (foundSnap && child.children.length > 0) {
+            child.classList.add('taj-extra-snap');
+            targets.push(child);
+          }
         }
       }
+      if (footer) targets.push(footer);
     }
-    if (footer) targets.push(footer);
   }
 
   function buildDots() {

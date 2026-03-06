@@ -3,7 +3,10 @@
   assign se_blocks = section.blocks 
   assign admin_sp = request.design_mode
   assign h__bgimg = se_stts.h__bgimg
-  assign h_transparent = false
+  assign h_transparent = se_stts.transparent_header
+  if request.page_type != 'index' 
+    assign h_transparent = false 
+  endif
   assign space_transparent = se_stts.space_transparent_header -%}
 
 {%- style -%}
@@ -12,8 +15,8 @@
     --h-text-color      : {{ se_stts.clnav }};
     --h-text-color-rgb  : {{ se_stts.clnav | color_to_rgb | remove: 'rgba(' | remove: 'rgb(' | remove: ')' }};
     --h-text-color-hover: {{ se_stts.clnav_hover }};
-    --h-bg-color        : {{ se_stts.bgnav | color_modify: 'alpha', 1 }};
-    background-color: {{ se_stts.bgnav | color_modify: 'alpha', 1 }};
+    --h-bg-color        : {{ se_stts.bgnav | color_modify: 'alpha', opnav }};
+    background-color: var(--h-bg-color);
   }
   .t4s-count-box {
     --h-count-bgcolor: {{ se_stts.bg_hc }};
@@ -70,12 +73,12 @@
     }
     {%- endunless -%}
     
+    {%- assign opnavst  = se_stts.opnavst | divided_by: 100.0 -%}
     .is-header--stuck .t4s-header__wrapper {
       --h-text-color      : {{ se_stts.clnavst }};
       --h-text-color-rgb  : {{ se_stts.clnavst | color_to_rgb | remove: 'rgba(' | remove: 'rgb(' | remove: ')' }};
       --h-text-color-hover: {{ se_stts.clnavst_hover }};
-      --h-bg-color        : {{ se_stts.bgnavst | color_modify: 'alpha', 1 }};
-      background-color: {{ se_stts.bgnavst | color_modify: 'alpha', 1 }};
+      --h-bg-color        : {{ se_stts.bgnavst | color_modify: 'alpha', opnavst }};
     }
     .is-header--stuck .header__sticky-logo {
       display:block !important
@@ -85,33 +88,6 @@
       display:none !important
     }
   {%- endif -%}
-
-  /* Mobile: white header icons on homepage (snap scroll) */
-  @media (max-width: 767px) {
-    body.template-index .t4s-header__wrapper,
-    body.template-index .is-header--stuck .t4s-header__wrapper {
-      --h-text-color: #fff !important;
-      --h-text-color-hover: rgba(255,255,255,0.8) !important;
-      --h-text-color-rgb: 255, 255, 255 !important;
-    }
-    body.template-index .t4s-site-nav__cart > a,
-    body.template-index .t4s-push-menu-btn,
-    body.template-index .t4s-site-nav__icon a,
-    body.template-index .is-header--stuck .t4s-site-nav__cart > a,
-    body.template-index .is-header--stuck .t4s-push-menu-btn,
-    body.template-index .is-header--stuck .t4s-site-nav__icon a {
-      color: #fff !important;
-    }
-    body.template-index .t4s-push-menu-btn svg,
-    body.template-index .t4s-site-nav__icon svg,
-    body.template-index .is-header--stuck .t4s-push-menu-btn svg,
-    body.template-index .is-header--stuck .t4s-site-nav__icon svg {
-      color: #fff !important;
-      fill: #fff !important;
-      stroke: #fff !important;
-    }
-    /* Menu drawer: dark text for readability on white background */
-  }
  
   .t4s-section-header [data-header-height] {
       min-height: {{ se_stts.h_navmb }}px;    
@@ -573,7 +549,7 @@ document.documentElement.style.setProperty('--header-height', document.getElemen
       {
         "type": "checkbox",
         "id": "scroll_header",
-        "label": "Hide sticky header on scroll down",
+        "label": "Enable hide sticky header on scroll down",
         "default": true
       },
       {

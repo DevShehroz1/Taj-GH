@@ -612,9 +612,9 @@
     </div>
   {% endif %}
 
-  {%- comment -%} Panel 3: Image Banner 1 {%- endcomment -%}
+  {%- comment -%} Panel 3: Image Banner 1 — custom header logo when in view {%- endcomment -%}
   {% if section.settings.banner_1_image != blank %}
-    <div class="taj-snap__panel" data-snap-panel>
+    <div class="taj-snap__panel" data-snap-panel data-header-logo="https://cdn.shopify.com/s/files/1/0720/2868/4423/files/image.png?v=1771432655">
       <div class="taj-snap__media taj-snap__media--desktop">
         <img src="{{ section.settings.banner_1_image | image_url: width: 1920 }}" alt="{{ section.settings.banner_1_title | escape }}" loading="lazy">
       </div>
@@ -790,24 +790,42 @@
 
   var WHITE_LOGO = 'https://cdn.shopify.com/s/files/1/0720/2868/4423/files/54548548.png?v=1771260571';
 
+  function setLogo(logoEl, url, clearSrcset) {
+    if (!logoEl) return;
+    if (!logoEl.dataset.originalSrc) {
+      logoEl.dataset.originalSrc = logoEl.src;
+      logoEl.dataset.originalSrcset = logoEl.srcset || '';
+    }
+    logoEl.src = url;
+    if (clearSrcset) logoEl.srcset = '';
+  }
+  function restoreLogo(logoEl) {
+    if (!logoEl || !logoEl.dataset.originalSrc) return;
+    logoEl.src = logoEl.dataset.originalSrc;
+    logoEl.srcset = logoEl.dataset.originalSrcset;
+  }
+
   function updateHeaderColor(index) {
     var logo = document.querySelector('.header__normal-logo');
-    if (logo && !logo.dataset.originalSrc) {
-      logo.dataset.originalSrc = logo.src;
-      logo.dataset.originalSrcset = logo.srcset || '';
-    }
+    var logoMobile = document.querySelector('.header__mobile-logo');
+    var target = targets.length && index >= 0 && index < targets.length ? targets[index] : null;
+    var customLogoUrl = target && target.getAttribute ? target.getAttribute('data-header-logo') : null;
 
     if (index === 0) {
       htmlEl.classList.add('taj-header-light');
       htmlEl.classList.remove('taj-header-dark');
-      if (logo) { logo.src = WHITE_LOGO; logo.srcset = ''; }
+      setLogo(logo, WHITE_LOGO, true);
+      setLogo(logoMobile, WHITE_LOGO, true);
+    } else if (customLogoUrl) {
+      htmlEl.classList.add('taj-header-light');
+      htmlEl.classList.remove('taj-header-dark');
+      setLogo(logo, customLogoUrl, true);
+      setLogo(logoMobile, customLogoUrl, true);
     } else {
       htmlEl.classList.remove('taj-header-light');
       htmlEl.classList.add('taj-header-dark');
-      if (logo && logo.dataset.originalSrc) {
-        logo.src = logo.dataset.originalSrc;
-        logo.srcset = logo.dataset.originalSrcset;
-      }
+      restoreLogo(logo);
+      restoreLogo(logoMobile);
     }
     if (isMobile()) forceMobileHeaderWhite();
   }

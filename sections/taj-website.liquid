@@ -10,7 +10,9 @@
     window.addEventListener('orientationchange', function() { setTimeout(setVh, 200); });
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', setVh);
-      window.visualViewport.addEventListener('scroll', setVh);
+      /* Do NOT listen to visualViewport 'scroll' — on iOS Safari
+         it fires during toolbar show/hide animation, causing --taj-vh
+         to change mid-scroll which shifts snap points and causes peeking */
     }
     document.addEventListener('DOMContentLoaded', function() {
       setVh();
@@ -378,11 +380,25 @@
     html.taj-snap-page {
       overscroll-behavior-y: none;
     }
+    /* Remove any theme-injected spacing that offsets snap panels */
+    html.taj-snap-page body {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
+    html.taj-snap-page #MainContent {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
     .taj-snap__panel {
       scroll-snap-align: start;
       scroll-snap-stop: always;
-      height: var(--taj-vh, 100vh);
-      min-height: var(--taj-vh, 100vh);
+      /* Use 100vh (large viewport on iOS) — constant value that never
+         changes during toolbar show/hide, keeping snap points stable.
+         Panels extend slightly behind the toolbar when visible, which
+         hides the next panel completely — no peeking. */
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
       overflow: hidden;
       box-sizing: border-box;
     }
@@ -391,6 +407,8 @@
 
     .taj-snap__panel--collections {
       height: auto;
+      min-height: 0;
+      max-height: none;
       scroll-snap-align: none;
       scroll-snap-stop: normal;
       overflow: visible;
@@ -404,8 +422,9 @@
     .taj-snap__col-card {
       scroll-snap-align: start;
       scroll-snap-stop: always;
-      height: var(--taj-vh, 100vh);
-      min-height: var(--taj-vh, 100vh);
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
       flex: none;
       overflow: hidden;
       box-sizing: border-box;
@@ -425,8 +444,9 @@
     .taj-extra-snap,
     html.taj-snap-page #t4s-footer {
       scroll-snap-align: start;
-      height: var(--taj-vh, 100vh);
-      min-height: var(--taj-vh, 100vh);
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
       overflow: hidden;
       box-sizing: border-box;
     }

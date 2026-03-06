@@ -12,8 +12,8 @@
     --h-text-color      : {{ se_stts.clnav }};
     --h-text-color-rgb  : {{ se_stts.clnav | color_to_rgb | remove: 'rgba(' | remove: 'rgb(' | remove: ')' }};
     --h-text-color-hover: {{ se_stts.clnav_hover }};
-    --h-bg-color        : {{ se_stts.bgnav | color_modify: 'alpha', opnav }};
-    background-color: var(--h-bg-color);
+    --h-bg-color        : {{ se_stts.bgnav | color_modify: 'alpha', 1 }};
+    background-color: {{ se_stts.bgnav | color_modify: 'alpha', 1 }};
   }
   .t4s-count-box {
     --h-count-bgcolor: {{ se_stts.bg_hc }};
@@ -70,13 +70,12 @@
     }
     {%- endunless -%}
     
-    {%- assign opnavst  = se_stts.opnavst | divided_by: 100.0 -%}
     .is-header--stuck .t4s-header__wrapper {
       --h-text-color      : {{ se_stts.clnavst }};
       --h-text-color-rgb  : {{ se_stts.clnavst | color_to_rgb | remove: 'rgba(' | remove: 'rgb(' | remove: ')' }};
       --h-text-color-hover: {{ se_stts.clnavst_hover }};
-      --h-bg-color        : {{ se_stts.bgnavst | color_modify: 'alpha', opnavst }};
-      background-color: {{ se_stts.bgnavst | color_modify: 'alpha', opnavst }};
+      --h-bg-color        : {{ se_stts.bgnavst | color_modify: 'alpha', 1 }};
+      background-color: {{ se_stts.bgnavst | color_modify: 'alpha', 1 }};
     }
     .is-header--stuck .header__sticky-logo {
       display:block !important

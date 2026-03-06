@@ -289,6 +289,7 @@
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.8s ease 0.1s, transform 0.8s ease 0.1s;
+    will-change: opacity, transform;
   }
   .taj-extra-snap.is-in-view > * {
     opacity: 1;
@@ -349,6 +350,7 @@
     opacity: 0;
     transform: translateY(18px);
     transition: opacity 0.7s ease 0.15s, transform 0.7s ease 0.15s;
+    will-change: opacity, transform;
   }
   .taj-snap__panel.is-in-view .taj-snap__overlay > * {
     opacity: 1;
@@ -361,6 +363,7 @@
     opacity: 0;
     transform: translateY(14px);
     transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+    will-change: opacity, transform;
   }
   .taj-snap__panel.is-in-view .taj-snap__col-info,
   .taj-snap__col-card.is-in-view .taj-snap__col-info {
@@ -840,35 +843,42 @@
     setActiveDot(index);
     updateHeaderColor(index);
 
-    htmlEl.style.scrollSnapType = 'none';
-
     var rect = targets[index].getBoundingClientRect();
     var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     var absTop = Math.max(0, Math.round(rect.top + scrollTop));
 
-    /* Mobile: instant scroll avoids conflict with native touch scroll-snap */
-    var behavior = isMobile() ? 'auto' : 'smooth';
-    window.scrollTo({ top: absTop, behavior: behavior });
-
     clearTimeout(cooldownId);
 
-    function finish() {
-      htmlEl.style.scrollSnapType = '';
-      setTimeout(unlock, 80);
-    }
-
     if (isMobile()) {
-      finish();
-    } else if ('onscrollend' in window) {
-      var done = function() {
-        window.removeEventListener('scrollend', done);
-        clearTimeout(cooldownId);
-        finish();
-      };
-      window.addEventListener('scrollend', done);
-      cooldownId = setTimeout(finish, 1000);
+      /* Mobile: instant scroll, don't disable scroll-snap-type
+         to avoid visual jumps — let native snap stay in control */
+      window.scrollTo({ top: absTop, behavior: 'auto' });
+      /* Short cooldown to let the snap settle before allowing next scroll */
+      cooldownId = setTimeout(function() {
+        setInView(true);
+        unlock();
+      }, 300);
     } else {
-      cooldownId = setTimeout(finish, 700);
+      /* Desktop: temporarily disable snap for smooth programmatic scroll */
+      htmlEl.style.scrollSnapType = 'none';
+      window.scrollTo({ top: absTop, behavior: 'smooth' });
+
+      var finish = function() {
+        htmlEl.style.scrollSnapType = '';
+        setTimeout(unlock, 80);
+      };
+
+      if ('onscrollend' in window) {
+        var done = function() {
+          window.removeEventListener('scrollend', done);
+          clearTimeout(cooldownId);
+          finish();
+        };
+        window.addEventListener('scrollend', done);
+        cooldownId = setTimeout(finish, 1000);
+      } else {
+        cooldownId = setTimeout(finish, 700);
+      }
     }
   }
 
@@ -900,11 +910,26 @@
         setActiveDot(currentIndex);
         updateHeaderColor(currentIndex);
       }
-      setInView();
+      /* On mobile, only add is-in-view during scroll (never remove).
+         After scroll settles, do a full cleanup pass. */
+      setInView(false);
+
+      if (isMobile()) {
+        isScrolling = true;
+        clearTimeout(scrollSettleTimer);
+        scrollSettleTimer = setTimeout(function() {
+          isScrolling = false;
+          setInView(true);
+        }, 150);
+      }
     });
   }
 
   function onTouchMove(e) {
+    /* On mobile, never block touch — let native CSS scroll-snap
+       handle the snapping to avoid jank and iOS conflicts.
+       Only block on desktop (e.g. trackpad touch surfaces). */
+    if (isMobile()) return;
     if (isInsideHeader(e.target)) return;
     if (isAnimating) e.preventDefault();
   }

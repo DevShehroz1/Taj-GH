@@ -63,11 +63,62 @@
     box-sizing: border-box;
     box-shadow: none !important;
     border: none !important;
-    transition: --h-text-color 0.18s ease, --h-bg-color 0.18s ease;
+    transition: --h-text-color 0.3s ease, --h-bg-color 0.3s ease;
   }
 
+  html.taj-snap-page .t4s-header__wrapper {
+    background-color: transparent !important;
+  }
 
-  /* Header: no overrides - uses theme original solid header from header-inline */
+  @media (min-width: 768px) {
+    html.taj-snap-page.taj-header-light .t4s-header__wrapper {
+      --h-text-color: #fff !important;
+      --h-text-color-hover: rgba(255,255,255,0.7) !important;
+      --h-bg-color: transparent !important;
+    }
+    html.taj-snap-page.taj-header-dark .t4s-header__wrapper {
+      --h-text-color: #000 !important;
+      --h-text-color-hover: rgba(0,0,0,0.6) !important;
+      --h-bg-color: transparent !important;
+    }
+  }
+
+  /* ═══ MOBILE: white header icons + white menu drawer (snap page only)
+      Override .is-header--stuck so theme sticky header colors don’t switch to black ═══ */
+  @media (max-width: 767px) {
+    html.taj-snap-page .t4s-header__wrapper,
+    html.taj-snap-page .is-header--stuck .t4s-header__wrapper {
+      --h-text-color: #fff !important;
+      --h-text-color-hover: rgba(255,255,255,0.8) !important;
+      --h-text-color-rgb: 255, 255, 255 !important;
+    }
+    html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,
+    html.taj-snap-page .t4s-section-header .t4s-site-nav__cart > a,
+    html.taj-snap-page .t4s-section-header .t4s-site-nav__icon a,
+    html.taj-snap-page .is-header--stuck .t4s-push-menu-btn,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__cart > a,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a {
+      color: #fff !important;
+    }
+    html.taj-snap-page .t4s-section-header .t4s-push-menu-btn svg,
+    html.taj-snap-page .t4s-section-header .t4s-site-nav__icon svg,
+    html.taj-snap-page .t4s-section-header .t4s-site-nav__icon a svg,
+    html.taj-snap-page .is-header--stuck .t4s-push-menu-btn svg,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon svg,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a svg {
+      color: #fff !important;
+      fill: #fff !important;
+    }
+    html.taj-snap-page .t4s-push-menu-btn:hover,
+    html.taj-snap-page .t4s-site-nav__cart > a:hover,
+    html.taj-snap-page .t4s-site-nav__icon a:hover,
+    html.taj-snap-page .is-header--stuck .t4s-push-menu-btn:hover,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__cart > a:hover,
+    html.taj-snap-page .is-header--stuck .t4s-site-nav__icon a:hover {
+      color: rgba(255,255,255,0.8) !important;
+    }
+    /* Menu drawer keeps theme default (dark text) - white background needs readable text */
+  }
 
   html.taj-snap-page #shopify-section-announcement-bar,
   html.taj-snap-page #shopify-section-top-bar {
@@ -227,8 +278,8 @@
   /* ═══ EXTRA SECTIONS AS SNAP TARGETS ═══ */
 
   .taj-extra-snap {
-    scroll-snap-align: none;
-    scroll-snap-stop: normal;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
     min-height: 100vh;
     min-height: 100dvh;
     display: flex !important;
@@ -242,7 +293,7 @@
   .taj-extra-snap > * {
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.35s ease 0.05s, transform 0.35s ease 0.05s;
+    transition: opacity 0.4s ease 0.05s, transform 0.4s ease 0.05s;
     will-change: opacity, transform;
   }
   .taj-extra-snap.is-in-view > * {
@@ -250,11 +301,16 @@
     transform: translateY(0);
   }
 
-  /* ═══ FOOTER — no snapping, scroll freely ═══ */
+  /* ═══ FOOTER AS LAST SNAP TARGET ═══ */
 
   html.taj-snap-page #t4s-footer {
-    scroll-snap-align: none;
-    scroll-snap-stop: normal;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
   }
 
   /* ═══ DOT INDICATORS ═══ */
@@ -279,7 +335,7 @@
     border: 1.5px solid rgba(255,255,255,0.7);
     background: transparent;
     cursor: pointer;
-    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
     padding: 0;
     -webkit-appearance: none;
     appearance: none;
@@ -293,7 +349,7 @@
     transform: scale(1.35);
   }
 
-  /* ═══ PANEL ENTRANCE ANIMATIONS — fast, minimal delay ═══ */
+  /* ═══ PANEL ENTRANCE ANIMATIONS ═══ */
 
   .taj-snap__overlay > * {
     opacity: 0;
@@ -306,12 +362,12 @@
     transform: translateY(0);
   }
   .taj-snap__panel.is-in-view .taj-snap__overlay > *:nth-child(2) {
-    transition-delay: 0.08s;
+    transition-delay: 0.12s;
   }
   .taj-snap__col-info {
     opacity: 0;
     transform: translateY(14px);
-    transition: opacity 0.35s ease 0.03s, transform 0.35s ease 0.03s;
+    transition: opacity 0.35s ease 0.05s, transform 0.35s ease 0.05s;
     will-change: opacity, transform;
   }
   .taj-snap__panel.is-in-view .taj-snap__col-info,
@@ -325,9 +381,7 @@
 
   @media (max-width: 767px) {
     html.taj-snap-page {
-      /* proximity = panels still snap (full-viewport = always within threshold)
-         but text columns + footer scroll freely since they have no snap-align */
-      scroll-snap-type: y proximity;
+      scroll-snap-type: y mandatory;
       overscroll-behavior-y: none;
       -webkit-overflow-scrolling: touch;
       overflow-x: hidden;
@@ -401,10 +455,10 @@
     .taj-snap__cta      { font-size: 11px; }
     .taj-snap__overlay  { padding-bottom: 46px; }
 
-    html.taj-snap-page .t4s-feature-columns,
+    .taj-extra-snap,
     html.taj-snap-page #t4s-footer {
-      scroll-snap-align: none !important;
-      scroll-snap-stop: normal !important;
+      scroll-snap-align: none;
+      scroll-snap-stop: normal;
       height: auto;
       min-height: 0;
       max-height: none;
@@ -633,6 +687,21 @@
 (function() {
   'use strict';
 
+  /* Inject mobile header white CSS immediately - must run before theme scripts */
+  if (document.documentElement.classList.contains('taj-snap-page') && window.innerWidth <= 767) {
+    if (!document.getElementById('taj-mobile-header-white')) {
+      var css = '@media (max-width:767px){' +
+        'html.taj-snap-page .t4s-section-header .t4s-header__wrapper,html.taj-snap-page .t4s-header__wrapper,html.taj-snap-page body .t4s-header__wrapper{--h-text-color:#fff!important;--h-text-color-hover:rgba(255,255,255,0.8)!important;--h-text-color-rgb:255,255,255!important}' +
+        'html.taj-snap-page .t4s-section-header a,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon,html.taj-snap-page .t4s-section-header .t4s-site-nav__icons a,html.taj-snap-page .t4s-section-header .t4s-site-nav__cart a,html.taj-snap-page .t4s-section-header .t4s-col-group_btns a,html.taj-snap-page .t4s-section-header .t4s-col-group_btns .t4s-push-menu-btn{color:#fff!important}' +
+        'html.taj-snap-page .t4s-section-header svg,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn svg,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon svg,html.taj-snap-page .t4s-section-header .t4s-col-group_btns svg{color:#fff!important;fill:#fff!important;stroke:#fff!important}' +
+      '}';
+      var s = document.createElement('style');
+      s.id = 'taj-mobile-header-white';
+      s.textContent = css;
+      (document.head || document.documentElement).appendChild(s);
+    }
+  }
+
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   var MOBILE_BP = 767;
@@ -681,7 +750,28 @@
       }
     }
 
-    /* Extra sections and footer: no snapping — scroll freely after banner panels */
+    /* On mobile, don't snap the extra sections or footer —
+       let them scroll naturally after the banner panels */
+    if (!isMobile()) {
+      var mainEl = document.getElementById('MainContent');
+      var footer = document.getElementById('t4s-footer');
+      if (mainEl) {
+        var children = mainEl.children;
+        var foundSnap = false;
+        for (var i = 0; i < children.length; i++) {
+          var child = children[i];
+          if (child.querySelector('.taj-snap') || child.querySelector('[data-snap-panel]')) {
+            foundSnap = true;
+            continue;
+          }
+          if (foundSnap && child.children.length > 0) {
+            child.classList.add('taj-extra-snap');
+            targets.push(child);
+          }
+        }
+      }
+      if (footer) targets.push(footer);
+    }
   }
 
   function buildDots() {
@@ -740,8 +830,60 @@
     }
   }
 
+  var WHITE_LOGO = 'https://cdn.shopify.com/s/files/1/0720/2868/4423/files/54548548.png?v=1771260571';
+
   function updateHeaderColor(index) {
-    /* Header uses theme defaults — no overrides */
+    var logo = document.querySelector('.header__normal-logo');
+    if (logo && !logo.dataset.originalSrc) {
+      logo.dataset.originalSrc = logo.src;
+      logo.dataset.originalSrcset = logo.srcset || '';
+    }
+
+    if (index === 0) {
+      htmlEl.classList.add('taj-header-light');
+      htmlEl.classList.remove('taj-header-dark');
+      if (logo) { logo.src = WHITE_LOGO; logo.srcset = ''; }
+    } else {
+      htmlEl.classList.remove('taj-header-light');
+      htmlEl.classList.add('taj-header-dark');
+      if (logo && logo.dataset.originalSrc) {
+        logo.src = logo.dataset.originalSrc;
+        logo.srcset = logo.dataset.originalSrcset;
+      }
+    }
+    if (isMobile()) forceMobileHeaderWhite();
+  }
+
+  function forceMobileHeaderWhite() {
+    if (!htmlEl.classList.contains('taj-snap-page') || !isMobile()) return;
+
+    /* Inject CSS once if not already (backup) */
+    if (!document.getElementById('taj-mobile-header-white')) {
+      var css = '@media (max-width:767px){html.taj-snap-page .t4s-header__wrapper{--h-text-color:#fff!important;--h-text-color-rgb:255,255,255!important}html.taj-snap-page .t4s-section-header a,html.taj-snap-page .t4s-section-header .t4s-push-menu-btn,html.taj-snap-page .t4s-section-header .t4s-site-nav__icon,html.taj-snap-page .t4s-section-header .t4s-site-nav__icons a,html.taj-snap-page .t4s-section-header .t4s-site-nav__cart a{color:#fff!important}html.taj-snap-page .t4s-section-header svg{color:#fff!important;fill:#fff!important;stroke:#fff!important}}';
+      var s = document.createElement('style');
+      s.id = 'taj-mobile-header-white';
+      s.textContent = css;
+      (document.head || document.documentElement).appendChild(s);
+    }
+
+    /* Inline styles as backup */
+    var wrapper = document.querySelector('.t4s-header__wrapper');
+    if (wrapper) {
+      wrapper.style.setProperty('--h-text-color', '#fff', 'important');
+      wrapper.style.setProperty('--h-text-color-hover', 'rgba(255,255,255,0.8)', 'important');
+      wrapper.style.setProperty('--h-text-color-rgb', '255, 255, 255', 'important');
+    }
+    var header = document.querySelector('.t4s-section-header');
+    if (header) {
+      [].forEach.call(header.querySelectorAll('a, .t4s-push-menu-btn, .t4s-site-nav__icon'), function(el) {
+        el.style.setProperty('color', '#fff', 'important');
+      });
+      [].forEach.call(header.querySelectorAll('svg'), function(el) {
+        el.style.setProperty('color', '#fff', 'important');
+        el.style.setProperty('fill', '#fff', 'important');
+        el.style.setProperty('stroke', '#fff', 'important');
+      });
+    }
   }
 
   function unlock() {
@@ -765,10 +907,11 @@
       /* Mobile: instant scroll, don't disable scroll-snap-type
          to avoid visual jumps — let native snap stay in control */
       window.scrollTo({ top: absTop, behavior: 'auto' });
+      /* Short cooldown to let the snap settle before allowing next scroll */
       cooldownId = setTimeout(function() {
         setInView(true);
         unlock();
-      }, 120);
+      }, 150);
     } else {
       /* Desktop: temporarily disable snap for smooth programmatic scroll */
       htmlEl.style.scrollSnapType = 'none';
@@ -786,9 +929,9 @@
           finish();
         };
         window.addEventListener('scrollend', done);
-        cooldownId = setTimeout(finish, 500);
+        cooldownId = setTimeout(finish, 1000);
       } else {
-        cooldownId = setTimeout(finish, 400);
+        cooldownId = setTimeout(finish, 700);
       }
     }
   }
@@ -831,7 +974,7 @@
         scrollSettleTimer = setTimeout(function() {
           isScrolling = false;
           setInView(true);
-        }, 80);
+        }, 50);
       }
     });
   }
@@ -894,6 +1037,7 @@
       setActiveDot(currentIndex);
       updateHeaderColor(currentIndex);
       setInView();
+      if (isMobile()) forceMobileHeaderWhite();
     }, 250);
   }
 
@@ -902,9 +1046,19 @@
     buildDots();
     setInView();
     updateHeaderColor(0);
+    if (isMobile()) forceMobileHeaderWhite();
 
     if (targets.length > 0) {
       targets[0].classList.add('is-in-view');
+    }
+
+    if (isMobile()) {
+      window.addEventListener('load', forceMobileHeaderWhite);
+      var mo = new MutationObserver(function() {
+        if (isMobile()) forceMobileHeaderWhite();
+      });
+      mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     }
 
     window.addEventListener('wheel', onWheel, { passive: false });
